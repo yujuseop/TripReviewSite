@@ -1,22 +1,24 @@
 // app/layout.tsx
-"use client";
+import "./globals.css"; // Tailwind 엔트리 CSS
+import { ReactQueryProvider } from "@/providers/query_provider";
+import { AuthSessionProvider } from "@/providers/session_provider";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+export const metadata = {
+  title: "My App",
+  description: "Next.js + Supabase + React Query",
+};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [queryClient] = useState(() => new QueryClient());
-
   return (
     <html lang="ko">
-      <body>
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
+      <body className="bg-gray-50 text-black">
+        <AuthSessionProvider>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );
