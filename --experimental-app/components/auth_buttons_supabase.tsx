@@ -1,18 +1,23 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
+import { useAuth } from "@/providers/supabase_auth_provider";
+import { useRouter } from "next/navigation";
 
-export function AuthButtons() {
-  const { status } = useSession();
+export function AuthButtonsSupabase() {
+  const { user, loading, signOut } = useAuth();
+  const router = useRouter();
 
-  if (status === "loading") {
-    return null;
+  if (loading) {
+    return <div className="px-6 py-3">Loading...</div>;
   }
 
-  if (status === "authenticated") {
+  if (user) {
     return (
       <button
-        onClick={() => signOut({ callbackUrl: "/" })}
+        onClick={async () => {
+          await signOut();
+          router.push("/");
+        }}
         className="px-6 py-3 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-900 transition"
       >
         로그아웃

@@ -5,9 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
-import { signupApi } from "@/lib/api/auth";
+import { useAuth } from "@/providers/supabase_auth_provider";
 
 const signupSchema = z
   .object({
@@ -25,6 +23,8 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const router = useRouter();
+  const { signUp } = useAuth();
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -33,37 +33,18 @@ export default function SignupPage() {
     resolver: zodResolver(signupSchema),
   });
 
-  // react-query mutation
-  const signupMutation = useMutation({
-    mutationFn: signupApi,
-    onSuccess: async (data, variables) => {
-      // 회원가입 성공 시 자동 로그인
-      const loginRes = await signIn("credentials", {
-        redirect: false,
-        email: variables.email,
-        password: variables.password,
-      });
+  const onSubmit = async (data: SignupFormValues) => {
+    setLoading(true);
+    const { error } = await signUp(data.email, data.password, data.nickname);
 
-      if (loginRes?.ok) {
-        router.push("/");
-      } else {
-        alert(
-          "회원가입은 되었으나 자동로그인 실패. 로그인 페이지로 이동합니다."
-        );
-        router.push("/login");
-      }
-    },
-    onError: (error: any) => {
-      alert(error.message || "회원가입 중 오류가 발생했습니다.");
-    },
-  });
+    setLoading(false);
 
-  const onSubmit = (data: SignupFormValues) => {
-    signupMutation.mutate({
-      email: data.email,
-      password: data.password,
-      nickname: data.nickname,
-    });
+    if (!error) {
+      alert("회원가입이 완료되었습니다! 이메일 인증 후 로그인해주세요.");
+      router.push("/login");
+    } else {
+      alert(`회원가입 실패: ${error}`);
+    }
   };
 
   return (
@@ -135,10 +116,10 @@ export default function SignupPage() {
           <div>
             <button
               type="submit"
-              disabled={signupMutation.isPending}
+              disabled={loading}
               className="w-full rounded-lg bg-blue-600 py-2 text-white hover:bg-blue-600"
             >
-              {signupMutation.isPending ? "회원가입 중..." : "회원가입"}
+              {loading ? "회원가입 중..." : "회원가입"}
             </button>
           </div>
         </form>

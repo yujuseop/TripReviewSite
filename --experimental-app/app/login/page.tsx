@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { signIn } from "next-auth/react";
+import { useAuth } from "@/providers/supabase_auth_provider";
 import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
@@ -16,6 +16,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const { signIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -25,18 +26,14 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormValues) => {
     setLoading(true);
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: data.email,
-      password: data.password,
-    });
+    const { error } = await signIn(data.email, data.password);
 
     setLoading(false);
 
-    if (res?.ok) {
+    if (!error) {
       router.push("/");
     } else {
-      alert("로그인에 실패하였습니다.");
+      alert(`로그인 실패: ${error}`);
     }
   };
 

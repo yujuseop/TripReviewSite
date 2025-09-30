@@ -1,11 +1,10 @@
-// app/layout.tsx
-import "./globals.css"; // Tailwind 엔트리 CSS
+import "./globals.css";
 import { ReactQueryProvider } from "@/providers/query_provider";
-import { AuthSessionProvider } from "@/providers/session_provider";
+import { SupabaseAuthProvider } from "@/providers/supabase_auth_provider";
 
 export const metadata = {
   title: "My App",
-  description: "Next.js + Supabase + React Query",
+  description: "Next.js App Router + Supabase Auth",
 };
 
 export default function RootLayout({
@@ -15,10 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className="bg-gray-50 text-black">
-        <AuthSessionProvider>
+      <body>
+        <SupabaseAuthProvider>
           <ReactQueryProvider>{children}</ReactQueryProvider>
-        </AuthSessionProvider>
+        </SupabaseAuthProvider>
       </body>
     </html>
   );
