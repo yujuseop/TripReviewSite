@@ -13,9 +13,10 @@ const signupSchema = z
     password: z.string().min(6, "비밀번호는 최소 6자리 이상이어야 합니다."),
     confirmPassword: z.string(),
     nickname: z.string().min(2, "닉네임은 최소 2자 이상이어야 합니다."),
+    adminCode: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"], // 오타 수정 (Passwrod → Password)
+    path: ["confirmPassword"],
     message: "비밀번호가 일치하지 않습니다.",
   });
 
@@ -25,6 +26,7 @@ export default function SignupPage() {
   const router = useRouter();
   const { signUp } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [showAdminCode, setShowAdminCode] = useState(false);
   const {
     register,
     handleSubmit,
@@ -35,8 +37,22 @@ export default function SignupPage() {
 
   const onSubmit = async (data: SignupFormValues) => {
     setLoading(true);
-    const { error } = await signUp(data.email, data.password, data.nickname);
+    const cleanEmail = data.email.trim().toLowerCase();
+    const cleanPassword = data.password.trim();
+    const cleanNickname = data.nickname.trim();
 
+    const role =
+      data.adminCode && data.adminCode === process.env.NEXT_PUBLIC_ADMIN_CODE
+        ? "admin"
+        : "user";
+
+    const { error } = await signUp(
+      cleanEmail,
+      cleanPassword,
+      cleanNickname,
+      data.adminCode?.trim()
+    );
+    console.log("email:", JSON.stringify(data.email));
     setLoading(false);
 
     if (!error) {
@@ -112,6 +128,27 @@ export default function SignupPage() {
               <p className="text-red-500 text-sm">{errors.nickname.message}</p>
             )}
           </div>
+          {/* 관리자 코드 */}
+          <button
+            type="button"
+            onClick={() => setShowAdminCode(!showAdminCode)}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            {showAdminCode ? "관리자 코드 숨기기" : "관리자 코드 입력하기"}
+          </button>
+          {showAdminCode && (
+            <div>
+              <label className="block text-sm font-medium text-black">
+                {" "}
+                관리자코드
+              </label>
+              <input
+                type="text"
+                {...register("adminCode")}
+                className="w-full mt-1 rounded-lg border border-black p-2 text-black"
+              />
+            </div>
+          )}
           {/* 회원가입 버튼 */}
           <div>
             <button

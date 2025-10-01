@@ -1,4 +1,3 @@
-// app/dashboard/DashboardClient.tsx
 "use client";
 
 import { useState } from "react";
@@ -11,7 +10,7 @@ export default function DashboardClient({ profile }: { profile: any }) {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">
-        안녕하세요, {profile?.nickname || profile?.email}님 👋
+        안녕하세요, {profile?.nickname}님 👋
       </h1>
 
       {/* 여행 추가 버튼 */}

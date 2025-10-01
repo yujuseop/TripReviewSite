@@ -1,36 +1,37 @@
-// app/dashboard/page.tsx (Server Component)
+// app/dashboard/page.tsx
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import DashboardClient from "./dashboardClient";
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
+
+  // ✅ Supabase SSR 클라이언트 생성
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        getAll() {
+          return cookieStore.getAll();
         },
-        set(name: string, value: string, options: any) {
-          cookieStore.set(name, value, options);
-        },
-        remove(name: string, options: any) {
-          cookieStore.set(name, "", options);
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
         },
       },
     }
   );
 
-  // 현재 로그인한 유저 가져오기
+  // ✅ 현재 로그인한 유저
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
 
   console.log("Dashboard - User:", user);
-  console.log("Dashboard - Error:", userError);
+  console.log("Dashboard - User Error:", userError);
 
   if (!user) {
     return (
@@ -43,15 +44,21 @@ export default async function DashboardPage() {
     );
   }
 
-  // 프로필 가져오기
+  // ✅ 프로필 조회
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("id, email, role, nickname")
+    .select("*")
     .eq("user_id", user.id)
     .single();
 
   console.log("Dashboard - Profile:", profile);
   console.log("Dashboard - Profile Error:", profileError);
 
-  return <DashboardClient profile={profile} />;
+  // ✅ fallback 프로필
+  const displayProfile = profile || {
+    nickname: user.email?.split("@")[0] || "사용자",
+    email: user.email,
+  };
+
+  return <DashboardClient profile={displayProfile} />;
 }
