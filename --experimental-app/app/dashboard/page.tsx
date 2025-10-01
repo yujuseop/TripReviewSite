@@ -6,7 +6,7 @@ import DashboardClient from "./dashboardClient";
 export default async function DashboardPage() {
   const cookieStore = await cookies();
 
-  // ✅ Supabase SSR 클라이언트 생성
+  // Supabase SSR 클라이언트 생성
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -24,7 +24,7 @@ export default async function DashboardPage() {
     }
   );
 
-  // ✅ 현재 로그인한 유저
+  //  현재 로그인한 유저
   const {
     data: { user },
     error: userError,
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
     );
   }
 
-  // ✅ 프로필 조회
+  //  프로필 조회
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("*")
@@ -54,7 +54,7 @@ export default async function DashboardPage() {
   console.log("Dashboard - Profile:", profile);
   console.log("Dashboard - Profile Error:", profileError);
 
-  // ✅ fallback 프로필
+  //  fallback 프로필
   const displayProfile = profile || {
     nickname: user.email?.split("@")[0] || "사용자",
     email: user.email,
