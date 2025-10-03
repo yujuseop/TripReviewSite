@@ -1,11 +1,14 @@
+// app/dashboard/DashboardClient.tsx
 "use client";
 
 import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import TravelModal from "./travelModal";
 
 export default function DashboardClient({ profile }: { profile: any }) {
   const [date, setDate] = useState<Date | null>(new Date());
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="p-6">
@@ -15,7 +18,10 @@ export default function DashboardClient({ profile }: { profile: any }) {
 
       {/* 여행 추가 버튼 */}
       <div className="mb-6">
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
           여행 추가하기 ✈️
         </button>
       </div>
@@ -26,6 +32,7 @@ export default function DashboardClient({ profile }: { profile: any }) {
         <Calendar
           value={date}
           onChange={(value) => setDate(value as Date | null)}
+          locale="ko-KR"
         />
         {date && (
           <p className="mt-4 text-gray-600">
@@ -42,6 +49,14 @@ export default function DashboardClient({ profile }: { profile: any }) {
           아직 여행이 없습니다. 새로운 여행을 추가해보세요!
         </p>
       </div>
+      {/* 여행 추가 모달 */}
+      {isModalOpen && (
+        <TravelModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          selectedDate={date || new Date()}
+        />
+      )}
     </div>
   );
 }
