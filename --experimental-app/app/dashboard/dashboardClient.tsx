@@ -36,8 +36,19 @@ interface Travel {
   destinations?: Destination[];
 }
 
+interface Profile {
+  id?: string;
+  nickname: string;
+  email?: string;
+  role?: string;
+  profile_image?: string;
+  bio?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 interface DashboardClientProps {
-  profile: any;
+  profile: Profile;
   initialTravels: Travel[];
   userId: string;
 }

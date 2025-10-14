@@ -4,12 +4,36 @@ import { useState } from "react";
 import { supabaseClient } from "@/lib/supabaseClient"; // optional: supabase 타입 정의가 있으면 경로 맞춰 사용
 import { toast } from "js-toastify";
 
+interface Travel {
+  id: string;
+  title: string;
+  start_date: string;
+  end_date: string;
+  description?: string;
+  is_public: boolean;
+  created_at: string;
+  destinations?: Array<{
+    id: string;
+    name: string;
+    description: string | null;
+    day: number | null;
+    order_num: number | null;
+    created_at: string;
+  }>;
+  reviews?: Array<{
+    id: string;
+    content: string;
+    rating: number;
+    created_at: string;
+  }>;
+}
+
 interface TravelModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedDate: Date;
   userId: string; // 서버에서 내려준 userId (dashboard/page.tsx)
-  onTravelAdded: (travel: any) => void;
+  onTravelAdded: (travel: Travel) => void;
 }
 
 export default function TravelModal({
@@ -133,7 +157,7 @@ export default function TravelModal({
       }
 
       // 준비할 결과 객체
-      const createdTrip: any = {
+      const createdTrip: Travel = {
         ...tripDataArr,
         destinations: [],
         reviews: [],
@@ -190,7 +214,7 @@ export default function TravelModal({
       // UI 정리
       resetForm();
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("에러:", err);
       toast("여행 저장 중 오류가 발생했습니다.", { type: "error" });
     } finally {

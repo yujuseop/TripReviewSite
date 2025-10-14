@@ -42,11 +42,6 @@ export default function SignupPage() {
     const cleanPassword = data.password.trim();
     const cleanNickname = data.nickname.trim();
 
-    const role =
-      data.adminCode && data.adminCode === process.env.NEXT_PUBLIC_ADMIN_CODE
-        ? "admin"
-        : "user";
-
     const { error } = await signUp(
       cleanEmail,
       cleanPassword,
