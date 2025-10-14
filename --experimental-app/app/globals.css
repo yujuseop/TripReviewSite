@@ -3,6 +3,25 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --toast-bg: #1a1a1a; /* Background color */
+  --toast-color: #ffffff; /* Text color */
+  --toast-padding: 16px 20px; /* Padding */
+  --toast-border-radius: 12px; /* Border radius */
+  --toast-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --toast-min-width: 200px; /* Minimum width */
+  --toast-gap: 8px; /* Gap between toasts */
+  --toast-z-index: 10000; /* Z-index */
+
+  /* Type colors */
+  --toast-success-color: #10b981;
+  --toast-error-color: #ef4444;
+  --toast-info-color: #3b82f6;
+  --toast-warning-color: #f59e0b;
+
+  /* Close button */
+  --toast-close-color: #9ca3af;
+  --toast-close-hover-color: #ffffff;
+  --toast-action-hover-bg: rgba(255, 255, 255, 0.1);
 }
 
 @theme inline {
@@ -23,4 +42,38 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* react-calendar 텍스트 색상 오버라이드 */
+.react-calendar,
+.react-calendar * {
+  color: #000 !important; /* 기본 텍스트를 검정색으로 */
+}
+
+/* 선택/활성 상태 등 배경색 유지하면서 글자색은 검정으로 */
+.react-calendar__tile,
+.react-calendar__navigation button {
+  color: #000 !important;
+}
+
+.toast-toast {
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px;
+}
+
+.toast-toast.success {
+  border-left: 6px solid #10b981;
+}
+
+.toast-toast.error {
+  border-left: 6px solid #ef4444;
+}
+
+.toast-toast.info {
+  border-left: 6px solid #3b82f6;
+}
+
+.toast-toast.warning {
+  border-left: 6px solid #f59e0b;
 }

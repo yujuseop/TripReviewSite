@@ -3,6 +3,9 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import DashboardClient from "./dashboardClient";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function DashboardPage() {
   const cookieStore = await cookies();
 
@@ -60,5 +63,36 @@ export default async function DashboardPage() {
     email: user.email,
   };
 
-  return <DashboardClient profile={displayProfile} />;
+  // 여행 목록 가져오기 (trip, reviews, destinations 조인)
+  const { data: travels } = await supabase
+    .from("trip")
+    .select(
+      `
+      *,
+      reviews (
+        id,
+        content,
+        rating,
+        created_at
+      ),
+      destinations (
+        id,
+        name,
+        description,
+        day,
+        order_num,
+        created_at
+      )
+    `
+    )
+    .eq("user_id", user.id)
+    .order("start_date", { ascending: false });
+
+  return (
+    <DashboardClient
+      profile={displayProfile}
+      initialTravels={travels || []}
+      userId={user.id}
+    />
+  );
 }

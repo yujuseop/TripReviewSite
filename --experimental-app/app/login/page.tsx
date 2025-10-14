@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/providers/supabase_auth_provider";
 import { useRouter } from "next/navigation";
+import { toast } from "js-toastify";
 
 const loginSchema = z.object({
   email: z.string().email("유효한 이메일을 입력해주세요."),
@@ -31,9 +32,12 @@ export default function LoginPage() {
     setLoading(false);
 
     if (!error) {
-      router.push("/");
+      router.push("/dashboard");
+      toast("로그인 성공!", { type: "success" });
     } else {
-      alert(`로그인 실패: ${error}`);
+      toast(`로그인 실패! 이메일 또는 비밀번호를 확인해주세요.`, {
+        type: "error",
+      });
     }
   };
 

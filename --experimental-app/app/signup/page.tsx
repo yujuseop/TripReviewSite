@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/supabase_auth_provider";
+import { toast } from "js-toastify";
 
 const signupSchema = z
   .object({
@@ -56,10 +57,12 @@ export default function SignupPage() {
     setLoading(false);
 
     if (!error) {
-      alert("회원가입이 완료되었습니다! 이메일 인증 후 로그인해주세요.");
+      toast("회원가입이 완료되었습니다! 이메일 인증 후 로그인해주세요.", {
+        type: "success",
+      });
       router.push("/login");
     } else {
-      alert(`회원가입 실패: ${error}`);
+      toast(`회원가입 실패: ${error}`, { type: "error" });
     }
   };
 
