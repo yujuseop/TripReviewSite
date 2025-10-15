@@ -73,18 +73,24 @@ export default function DashboardClient({
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">
+    <div className="p-6 ">
+      <h1 className="text-2xl font-bold mb-4 ">
         안녕하세요, {profile?.nickname}님 👋
-        <div className="mb-4 flex justify-end">
-          <button
-            onClick={handleSignOut}
-            className="px-3 py-1 text-sm border rounded hover:bg-gray-500"
-          >
-            로그아웃
-          </button>
-        </div>
       </h1>
+      <div className="mb-4 flex gap-3 ">
+        <a
+          href="/profile"
+          className="px-3 py-1 text-sm border rounded hover:bg-gray-500"
+        >
+          프로필
+        </a>
+        <button
+          onClick={handleSignOut}
+          className="px-3 py-1 text-sm border rounded hover:bg-gray-500"
+        >
+          로그아웃
+        </button>
+      </div>
 
       {/* 여행 추가 버튼 */}
       <div className="mb-6">

@@ -48,6 +48,14 @@ export default function ProfilePage() {
           <p className="font-medium">{nickname || "닉네임 없음"}</p>
         </div>
       </div>
+      <div>
+        <a
+          href="/dashboard"
+          className="mt-6 inline-block px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
+          대시보드로 돌아가기
+        </a>
+      </div>
     </div>
   );
 }
