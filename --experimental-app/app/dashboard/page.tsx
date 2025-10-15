@@ -63,8 +63,8 @@ export default async function DashboardPage() {
     email: user.email,
   };
 
-  // 여행 목록 가져오기 (trip, reviews, destinations 조인)
-  const { data: travels } = await supabase
+  // 여행 목록 가져오기 (trip, reviews 조인만 - destinations는 임시 제외)
+  const { data: travels, error: travelsError } = await supabase
     .from("trip")
     .select(
       `
@@ -74,19 +74,15 @@ export default async function DashboardPage() {
         content,
         rating,
         created_at
-      ),
-      destinations (
-        id,
-        name,
-        description,
-        day,
-        order_num,
-        created_at
       )
     `
     )
     .eq("user_id", user.id)
     .order("start_date", { ascending: false });
+
+  console.log("Dashboard - Travels:", travels);
+  console.log("Dashboard - Travels Error:", travelsError);
+  console.log("Dashboard - User ID for query:", user.id);
 
   return (
     <DashboardClient

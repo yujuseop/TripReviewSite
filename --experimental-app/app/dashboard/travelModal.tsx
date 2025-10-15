@@ -188,6 +188,9 @@ export default function TravelModal({
 
       // 3) 리뷰 추가 (있다면)
       if (tripDataArr && reviewContent.trim()) {
+        console.log("리뷰 저장 시도 - user_id:", effectiveUserId);
+        console.log("리뷰 저장 시도 - trip_id:", tripDataArr.id);
+
         const { data: insertedReviews, error: reviewError } = await supabase
           .from("reviews")
           .insert({
@@ -200,7 +203,11 @@ export default function TravelModal({
 
         if (reviewError) {
           console.error("리뷰 저장 실패:", reviewError);
+          toast("리뷰 저장에 실패했습니다: " + reviewError.message, {
+            type: "error",
+          });
         } else {
+          console.log("리뷰 저장 성공:", insertedReviews);
           // insertedReviews may be an array or object depending on .insert usage; normalize to array
           createdTrip.reviews = Array.isArray(insertedReviews)
             ? insertedReviews
