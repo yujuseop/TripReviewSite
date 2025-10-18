@@ -3,6 +3,7 @@
 import { useAuth } from "@/providers/supabase_auth_provider";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "@/lib/supabaseClient";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
@@ -49,12 +50,12 @@ export default function ProfilePage() {
         </div>
       </div>
       <div>
-        <a
+        <Link
           href="/dashboard"
           className="mt-6 inline-block px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
         >
           대시보드로 돌아가기
-        </a>
+        </Link>
       </div>
     </div>
   );

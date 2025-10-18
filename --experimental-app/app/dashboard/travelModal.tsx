@@ -25,6 +25,7 @@ interface Travel {
     content: string;
     rating: number;
     created_at: string;
+    user_id: string;
   }>;
 }
 
@@ -199,7 +200,7 @@ export default function TravelModal({
             content: reviewContent.trim(),
             rating: rating,
           })
-          .select();
+          .select("id, content, rating, created_at, user_id");
 
         if (reviewError) {
           console.error("리뷰 저장 실패:", reviewError);
