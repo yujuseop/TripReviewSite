@@ -28,7 +28,20 @@ export const useLogin = () => {
       });
 
       if (error) {
-        toast(`로그인 실패: ${error.message}`, { type: "error" });
+        // 이메일 인증 관련 에러인지 확인
+        if (
+          error.message.includes("email not confirmed") ||
+          error.message.includes("Invalid login credentials")
+        ) {
+          toast(
+            "이메일 인증이 필요합니다. 이메일을 확인하고 인증 링크를 클릭한 후 다시 로그인해주세요.",
+            {
+              type: "error",
+            }
+          );
+        } else {
+          toast(`로그인 실패: ${error.message}`, { type: "error" });
+        }
         return { success: false, error: error.message };
       }
 
@@ -55,7 +68,7 @@ export const useSignup = () => {
   const signup = async (data: SignupData) => {
     setIsLoading(true);
     try {
-      const { error } = await supabaseClient.auth.signUp({
+      const { data: signupData, error } = await supabaseClient.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -75,9 +88,20 @@ export const useSignup = () => {
         return { success: false, error: error.message };
       }
 
-      toast("회원가입이 완료되었습니다! 이메일 인증 후 로그인해주세요.", {
-        type: "success",
-      });
+      // 이메일 인증이 필요한지 확인
+      if (signupData.user && !signupData.user.email_confirmed_at) {
+        toast(
+          "회원가입이 완료되었습니다! 이메일을 확인하고 인증 링크를 클릭한 후 로그인해주세요.",
+          {
+            type: "success",
+          }
+        );
+      } else {
+        toast("회원가입이 완료되었습니다! 로그인해주세요.", {
+          type: "success",
+        });
+      }
+
       router.push("/login");
       return { success: true };
     } catch (err) {
