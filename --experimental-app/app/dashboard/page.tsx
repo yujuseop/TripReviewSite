@@ -51,8 +51,13 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .single();
 
+  console.log("Dashboard - User ID:", user.id);
+  console.log("Dashboard - Profile:", profile);
+  console.log("Dashboard - Profile Error:", profileError);
+
   const displayProfile = profile || {
-    nickname: user.email?.split("@")[0] || "사용자",
+    nickname:
+      user.user_metadata?.nickname || user.email?.split("@")[0] || "사용자",
     email: user.email,
   };
 

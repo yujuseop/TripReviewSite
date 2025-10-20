@@ -1,4 +1,3 @@
-// app/page.tsx
 import { AuthButtonsSupabase } from "@/components/auth_buttons_supabase";
 
 export default function HomePage() {

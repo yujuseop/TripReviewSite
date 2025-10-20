@@ -22,7 +22,6 @@ export default function Calendar({ events }: CalendarProps) {
       date: new Date().toISOString().split("T")[0],
     };
     setCurrentEvents([...currentEvents, newEvent]);
-    //TODO:API 호풀해서 서버에도 저장
   };
 
   return (

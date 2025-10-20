@@ -1,4 +1,3 @@
-// app/dashboard/DashboardClient.tsx
 "use client";
 
 import { useState } from "react";
@@ -8,6 +7,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import TravelModal from "./travelModal";
 import ReviewDetailModal from "@/components/ReviewDetailModal";
+import Modal from "@/components/ui/Modal";
 import { useModal } from "@/hooks/useModal";
 import { toast } from "js-toastify";
 import Link from "next/link";
@@ -76,7 +76,6 @@ export default function DashboardClient({
     travelId: "",
   });
 
-  // 공용 모달 훅들
   const travelModal = useModal();
   const reviewDetailModal = useModal();
   const deleteConfirmModal = useModal();
@@ -118,7 +117,6 @@ export default function DashboardClient({
         return;
       }
 
-      // UI에서 리뷰 제거
       setTravels((prevTravels) =>
         prevTravels.map((travel) =>
           travel.id === travelId
@@ -141,7 +139,6 @@ export default function DashboardClient({
         type: "error",
       });
     } finally {
-      // 모달 닫기
       setDeleteConfirm({
         isOpen: false,
         reviewId: "",
@@ -295,7 +292,7 @@ export default function DashboardClient({
                             review.user_id === userId) && (
                             <button
                               onClick={(e) => {
-                                e.stopPropagation(); // 리뷰 클릭 이벤트 방지
+                                e.stopPropagation();
                                 handleReviewDeleteClick(review.id, travel.id);
                               }}
                               className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded hover:bg-red-50"
@@ -359,36 +356,34 @@ export default function DashboardClient({
       />
 
       {/* 리뷰 삭제 확인 모달 */}
-      {deleteConfirm.isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-          <div className="bg-white p-6 rounded-xl w-full max-w-md mx-4">
-            <h3 className="text-lg font-semibold mb-4 text-black">
-              리뷰 삭제 확인
-            </h3>
-            <p className="text-gray-600 mb-6">
-              정말로 이 리뷰를 삭제하시겠습니까?
-              <br />
-              <span className="text-sm text-gray-500">
-                삭제된 리뷰는 복구할 수 없습니다.
-              </span>
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={handleReviewDeleteCancel}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
-              >
-                취소
-              </button>
-              <button
-                onClick={handleReviewDeleteConfirm}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                삭제
-              </button>
-            </div>
-          </div>
+      <Modal
+        isOpen={deleteConfirm.isOpen}
+        onClose={handleReviewDeleteCancel}
+        title="리뷰 삭제 확인"
+        size="md"
+      >
+        <p className="text-gray-600 mb-6">
+          정말로 이 리뷰를 삭제하시겠습니까?
+          <br />
+          <span className="text-sm text-gray-500">
+            삭제된 리뷰는 복구할 수 없습니다.
+          </span>
+        </p>
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={handleReviewDeleteCancel}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleReviewDeleteConfirm}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+          >
+            삭제
+          </button>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

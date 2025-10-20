@@ -28,7 +28,6 @@ export const useLogin = () => {
       });
 
       if (error) {
-        // 이메일 인증 관련 에러인지 확인
         if (
           error.message.includes("email not confirmed") ||
           error.message.includes("Invalid login credentials")
@@ -88,7 +87,6 @@ export const useSignup = () => {
         return { success: false, error: error.message };
       }
 
-      // 이메일 인증이 필요한지 확인
       if (signupData.user && !signupData.user.email_confirmed_at) {
         toast(
           "회원가입이 완료되었습니다! 이메일을 확인하고 인증 링크를 클릭한 후 로그인해주세요.",

@@ -30,14 +30,12 @@ export function SupabaseAuthProvider({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    //초기 세션 가져오기
     supabaseClient.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    //인증 상태 변경 감지
     const {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange((_event, session) => {
@@ -49,7 +47,6 @@ export function SupabaseAuthProvider({
     return () => subscription.unsubscribe();
   }, []);
 
-  // 로그인
   const signIn = async (email: string, password: string) => {
     const { error } = await supabaseClient.auth.signInWithPassword({
       email,
@@ -58,14 +55,12 @@ export function SupabaseAuthProvider({
     return { error: error?.message };
   };
 
-  // 회원가입
   const signUp = async (
     email: string,
     password: string,
     nickname: string,
     adminCode?: string
   ) => {
-    // 👉 관리자 코드가 일치하면 admin, 아니면 일반 user
     const role =
       adminCode && adminCode === process.env.NEXT_PUBLIC_ADMIN_CODE
         ? "admin"
@@ -84,11 +79,10 @@ export function SupabaseAuthProvider({
     if (error) return { error: error.message };
 
     if (data.user) {
-      //프로필 테이블에 닉네임 + 역할 저장
       const { error: profileError } = await supabaseClient
         .from("profiles")
         .insert({
-          user_id: data.user.id,
+          // user_id는 트리거에서 자동 설정
           nickname,
           role,
         });
@@ -99,7 +93,6 @@ export function SupabaseAuthProvider({
     return {};
   };
 
-  // 로그아웃
   const signOut = async () => {
     await supabaseClient.auth.signOut();
   };
