@@ -1,4 +1,4 @@
-# 🧳 TripReviewSite
+# 🧳 TripView
 
 여행 기록 및 리뷰를 관리할 수 있는 Next.js 기반 웹 애플리케이션입니다.
 
