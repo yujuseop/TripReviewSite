@@ -17,11 +17,7 @@ export default async function DashboardPage() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        },
+        setAll() {},
       },
     }
   );
@@ -61,7 +57,7 @@ export default async function DashboardPage() {
     email: user.email,
   };
 
-  const { data: travels, error: travelsError } = await supabase
+  const { data: travels } = await supabase
     .from("trip")
     .select(
       `

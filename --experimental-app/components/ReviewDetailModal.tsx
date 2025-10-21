@@ -1,27 +1,20 @@
 import Modal from "./ui/Modal";
-
-interface Review {
-  id: string;
-  content: string;
-  rating: number;
-  created_at: string;
-  user_id: string;
-}
+import { Review } from "@/types/travel";
 
 interface ReviewDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   review: Review | null;
-  canDelete: boolean;
-  onDelete: () => void;
+  canEdit: boolean;
+  onEdit: () => void;
 }
 
 export default function ReviewDetailModal({
   isOpen,
   onClose,
   review,
-  canDelete,
-  onDelete,
+  canEdit,
+  onEdit,
 }: ReviewDetailModalProps) {
   if (!review) return null;
 
@@ -74,12 +67,12 @@ export default function ReviewDetailModal({
         >
           닫기
         </button>
-        {canDelete && (
+        {canEdit && (
           <button
-            onClick={onDelete}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            onClick={onEdit}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
-            삭제
+            수정
           </button>
         )}
       </div>

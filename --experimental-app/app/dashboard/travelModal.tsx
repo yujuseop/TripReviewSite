@@ -1,42 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { supabaseClient } from "@/lib/supabaseClient";
 import { toast } from "js-toastify";
 import Modal from "@/components/ui/Modal";
-
-interface Travel {
-  id: string;
-  title: string;
-  start_date: string;
-  end_date: string;
-  description?: string;
-  is_public: boolean;
-  created_at: string;
-  destinations?: Array<{
-    id: string;
-    name: string;
-    description: string | null;
-    day: number | null;
-    order_num: number | null;
-    created_at: string;
-  }>;
-  reviews?: Array<{
-    id: string;
-    content: string;
-    rating: number;
-    created_at: string;
-    user_id: string;
-  }>;
-}
-
-interface TravelModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  selectedDate: Date;
-  userId: string;
-  onTravelAdded: (travel: Travel) => void;
-}
+import { Travel, TravelModalProps } from "@/types/travel";
+import { useTravelForm } from "@/hooks/useTravelForm";
 
 export default function TravelModal({
   isOpen,
@@ -45,72 +13,35 @@ export default function TravelModal({
   userId,
   onTravelAdded,
 }: TravelModalProps) {
-  const supabase = supabaseClient;
-  const [location, setLocation] = useState("");
-  const [reviewContent, setReviewContent] = useState("");
-  const [rating, setRating] = useState(5);
-  const [isPublic, setIsPublic] = useState(true);
-  const [loading, setLoading] = useState(false);
-
-  const [destinations, setDestinations] = useState<
-    { name: string; description: string; day: number }[]
-  >([]);
-  const [destName, setDestName] = useState("");
-  const [destDesc, setDestDesc] = useState("");
-  const [destDay, setDestDay] = useState(1);
-
-  const addDestination = () => {
-    if (!destName.trim()) return;
-    setDestinations([
-      ...destinations,
-      { name: destName.trim(), description: destDesc.trim(), day: destDay },
-    ]);
-    setDestName("");
-    setDestDesc("");
-    setDestDay(1);
-  };
-
-  const removeDestination = (index: number) => {
-    setDestinations(destinations.filter((_, i) => i !== index));
-  };
-
-  const resetForm = () => {
-    setLocation("");
-    setReviewContent("");
-    setRating(5);
-    setIsPublic(true);
-    setDestinations([]);
-    setDestName("");
-    setDestDesc("");
-    setDestDay(1);
-  };
+  const { state, dispatch, addDestination, removeDestination, resetForm } =
+    useTravelForm();
 
   const handleSave = async () => {
-    if (!location.trim()) {
+    if (!state.location.trim()) {
       toast("여행지를 입력해주세요!", { type: "error" });
       return;
     }
 
-    setLoading(true);
+    dispatch({ type: "SET_LOADING", payload: true });
 
     try {
       const {
         data: { user: sessionUser },
         error: userErr,
-      } = await supabase.auth.getUser();
+      } = await supabaseClient.auth.getUser();
 
       if (userErr) {
         console.error("세션 조회 에러:", userErr);
         toast("세션을 확인할 수 없습니다. 다시 로그인해주세요.", {
           type: "error",
         });
-        setLoading(false);
+        dispatch({ type: "SET_LOADING", payload: false });
         return;
       }
 
       if (!sessionUser) {
         toast("로그인이 필요합니다.", { type: "error" });
-        setLoading(false);
+        dispatch({ type: "SET_LOADING", payload: false });
         return;
       }
 
@@ -124,19 +55,22 @@ export default function TravelModal({
 
       const effectiveUserId = sessionUser.id;
 
-      const startDateStr = selectedDate.toISOString().split("T")[0];
+      const year = selectedDate.getFullYear();
+      const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
+      const day = String(selectedDate.getDate()).padStart(2, "0");
+      const startDateStr = `${year}-${month}-${day}`;
       const endDateStr = startDateStr;
 
-      const { data: tripDataArr, error: tripError } = await supabase
+      const { data: tripDataArr, error: tripError } = await supabaseClient
         .from("trip")
         .insert([
           {
             user_id: effectiveUserId,
-            title: location.trim(),
+            title: state.location.trim(),
             start_date: startDateStr,
             end_date: endDateStr,
-            is_public: isPublic,
-            description: reviewContent.trim() || null,
+            is_public: state.isPublic,
+            description: state.reviewContent.trim() || null,
           },
         ])
         .select()
@@ -147,7 +81,7 @@ export default function TravelModal({
         toast("여행 저장에 실패했습니다: " + tripError.message, {
           type: "error",
         });
-        setLoading(false);
+        dispatch({ type: "SET_LOADING", payload: false });
         return;
       }
 
@@ -157,8 +91,8 @@ export default function TravelModal({
         reviews: [],
       };
 
-      if (tripDataArr && destinations.length > 0) {
-        const destinationsToInsert = destinations.map((dest, index) => ({
+      if (tripDataArr && state.destinations.length > 0) {
+        const destinationsToInsert = state.destinations.map((dest, index) => ({
           trip_id: tripDataArr.id,
           name: dest.name,
           description: dest.description || null,
@@ -166,10 +100,11 @@ export default function TravelModal({
           order_num: index + 1,
         }));
 
-        const { data: insertedDestinations, error: destError } = await supabase
-          .from("destinations")
-          .insert(destinationsToInsert)
-          .select();
+        const { data: insertedDestinations, error: destError } =
+          await supabaseClient
+            .from("destinations")
+            .insert(destinationsToInsert)
+            .select();
 
         if (destError) {
           console.error("목적지 저장 실패:", destError);
@@ -178,16 +113,17 @@ export default function TravelModal({
         }
       }
 
-      if (tripDataArr && reviewContent.trim()) {
-        const { data: insertedReviews, error: reviewError } = await supabase
-          .from("reviews")
-          .insert({
-            trip_id: tripDataArr.id,
-            user_id: effectiveUserId,
-            content: reviewContent.trim(),
-            rating: rating,
-          })
-          .select("id, content, rating, created_at, user_id");
+      if (tripDataArr && state.reviewContent.trim()) {
+        const { data: insertedReviews, error: reviewError } =
+          await supabaseClient
+            .from("reviews")
+            .insert({
+              trip_id: tripDataArr.id,
+              user_id: effectiveUserId,
+              content: state.reviewContent.trim(),
+              rating: state.rating,
+            })
+            .select("id, content, rating, created_at, user_id");
 
         if (reviewError) {
           console.error("리뷰 저장 실패:", reviewError);
@@ -210,7 +146,7 @@ export default function TravelModal({
       console.error("에러:", err);
       toast("여행 저장 중 오류가 발생했습니다.", { type: "error" });
     } finally {
-      setLoading(false);
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
@@ -228,8 +164,10 @@ export default function TravelModal({
       <input
         type="text"
         placeholder="여행지 입력"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
+        value={state.location}
+        onChange={(e) =>
+          dispatch({ type: "SET_LOCATION", payload: e.target.value })
+        }
         className="border p-2 w-full my-2 rounded"
       />
 
@@ -241,13 +179,20 @@ export default function TravelModal({
             <input
               type="text"
               placeholder="목적지 이름"
-              value={destName}
-              onChange={(e) => setDestName(e.target.value)}
+              value={state.destName}
+              onChange={(e) =>
+                dispatch({ type: "SET_DEST_NAME", payload: e.target.value })
+              }
               className="border p-2 flex-1 rounded text-sm"
             />
             <select
-              value={destDay}
-              onChange={(e) => setDestDay(Number(e.target.value))}
+              value={state.destDay}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_DEST_DAY",
+                  payload: Number(e.target.value),
+                })
+              }
               className="border p-2 rounded text-sm"
             >
               {[1, 2, 3, 4, 5, 6, 7].map((d) => (
@@ -260,8 +205,10 @@ export default function TravelModal({
           <input
             type="text"
             placeholder="설명 (선택사항)"
-            value={destDesc}
-            onChange={(e) => setDestDesc(e.target.value)}
+            value={state.destDesc}
+            onChange={(e) =>
+              dispatch({ type: "SET_DEST_DESC", payload: e.target.value })
+            }
             className="border p-2 w-full rounded text-sm"
           />
           <div className="flex gap-2">
@@ -276,9 +223,9 @@ export default function TravelModal({
         </div>
 
         {/* 추가된 목적지 목록 */}
-        {destinations.length > 0 && (
+        {state.destinations.length > 0 && (
           <div className="space-y-1">
-            {destinations.map((dest, index) => (
+            {state.destinations.map((dest, index) => (
               <div
                 key={index}
                 className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded"
@@ -305,9 +252,11 @@ export default function TravelModal({
       </div>
 
       <textarea
-        placeholder="리뷰 작성 (선택사항)"
-        value={reviewContent}
-        onChange={(e) => setReviewContent(e.target.value)}
+        placeholder="리뷰 작성"
+        value={state.reviewContent}
+        onChange={(e) =>
+          dispatch({ type: "SET_REVIEW_CONTENT", payload: e.target.value })
+        }
         className="border p-2 w-full my-2 rounded"
         rows={3}
       />
@@ -319,10 +268,10 @@ export default function TravelModal({
             <button
               key={star}
               type="button"
-              onClick={() => setRating(star)}
+              onClick={() => dispatch({ type: "SET_RATING", payload: star })}
               className="text-2xl"
             >
-              {star <= rating ? "⭐" : "☆"}
+              {star <= state.rating ? "⭐" : "☆"}
             </button>
           ))}
         </div>
@@ -331,8 +280,10 @@ export default function TravelModal({
       <label className="flex items-center gap-2 my-2">
         <input
           type="checkbox"
-          checked={isPublic}
-          onChange={(e) => setIsPublic(e.target.checked)}
+          checked={state.isPublic}
+          onChange={(e) =>
+            dispatch({ type: "SET_IS_PUBLIC", payload: e.target.checked })
+          }
         />
         공개 여행으로 설정
       </label>
@@ -344,16 +295,16 @@ export default function TravelModal({
             onClose();
           }}
           className="px-4 py-2 border rounded hover:bg-gray-100"
-          disabled={loading}
+          disabled={state.loading}
         >
           취소
         </button>
         <button
           onClick={handleSave}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
-          disabled={loading}
+          disabled={state.loading}
         >
-          {loading ? "저장 중..." : "저장"}
+          {state.loading ? "저장 중..." : "저장"}
         </button>
       </div>
     </Modal>

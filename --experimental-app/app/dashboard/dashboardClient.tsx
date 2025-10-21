@@ -7,50 +7,13 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import TravelModal from "./travelModal";
 import ReviewDetailModal from "@/components/ReviewDetailModal";
-import Modal from "@/components/ui/Modal";
-import { useModal } from "@/hooks/useModal";
-import { toast } from "js-toastify";
+import ReviewEditModal from "@/components/ReviewEditModal";
+import DeleteConfirmModal from "@/components/DeleteConfirmModal";
+import { useModalState } from "@/hooks/useModalState";
+import { useDelete } from "@/hooks/useDelete";
+import { useReviewEdit } from "@/hooks/useReviewEdit";
 import Link from "next/link";
-
-interface Review {
-  id: string;
-  content: string;
-  rating: number;
-  created_at: string;
-  user_id: string;
-}
-
-interface Destination {
-  id: string;
-  name: string;
-  description: string | null;
-  day: number | null;
-  order_num: number | null;
-  created_at: string;
-}
-
-interface Travel {
-  id: string;
-  title: string;
-  start_date: string;
-  end_date: string;
-  description?: string;
-  is_public: boolean;
-  created_at: string;
-  reviews?: Review[];
-  destinations?: Destination[];
-}
-
-interface Profile {
-  id?: string;
-  nickname: string;
-  email?: string;
-  role?: string;
-  profile_image?: string;
-  bio?: string;
-  created_at?: string;
-  updated_at?: string;
-}
+import { Travel, Review, Profile } from "@/types";
 
 interface DashboardClientProps {
   profile: Profile;
@@ -66,20 +29,18 @@ export default function DashboardClient({
   const [date, setDate] = useState<Date | null>(new Date());
   const [travels, setTravels] = useState<Travel[]>(initialTravels);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<{
-    isOpen: boolean;
-    reviewId: string;
-    travelId: string;
-  }>({
-    isOpen: false,
-    reviewId: "",
-    travelId: "",
-  });
+  const [selectedTravel, setSelectedTravel] = useState<Travel | null>(null);
 
-  const travelModal = useModal();
-  const reviewDetailModal = useModal();
-  const deleteConfirmModal = useModal();
-
+  const {
+    modals,
+    deleteConfirm,
+    openModal,
+    closeModal,
+    openDeleteConfirm,
+    closeDeleteConfirm,
+  } = useModalState();
+  const { deleteTravel, isLoading } = useDelete();
+  const { updateReview, isLoading: isReviewUpdating } = useReviewEdit();
   const router = useRouter();
 
   const handleTravelAdded = (newTravel: Travel) => {
@@ -88,73 +49,57 @@ export default function DashboardClient({
 
   const handleReviewClick = (review: Review) => {
     setSelectedReview(review);
-    reviewDetailModal.open();
+    openModal("reviewDetailModal");
   };
 
-  const handleReviewDeleteClick = (reviewId: string, travelId: string) => {
-    setDeleteConfirm({
-      isOpen: true,
-      reviewId,
-      travelId,
-    });
-    deleteConfirmModal.open();
+  const handleTravelDeleteClick = (travel: Travel) => {
+    setSelectedTravel(travel);
+    openDeleteConfirm("travel", travel.id);
   };
 
-  const handleReviewDeleteConfirm = async () => {
-    const { reviewId, travelId } = deleteConfirm;
+  const handleTravelDeleteConfirm = async () => {
+    if (!selectedTravel) return;
 
-    try {
-      const { error } = await supabaseClient
-        .from("reviews")
-        .delete()
-        .eq("id", reviewId);
+    const result = await deleteTravel(selectedTravel.id);
 
-      if (error) {
-        console.error("리뷰 삭제 실패:", error);
-        toast("리뷰 삭제에 실패했습니다: " + error.message, {
-          type: "error",
-        });
-        return;
-      }
-
+    if (result.success) {
       setTravels((prevTravels) =>
-        prevTravels.map((travel) =>
-          travel.id === travelId
-            ? {
-                ...travel,
-                reviews:
-                  travel.reviews?.filter((review) => review.id !== reviewId) ||
-                  [],
-              }
-            : travel
-        )
+        prevTravels.filter((travel) => travel.id !== selectedTravel.id)
       );
-
-      toast("리뷰가 삭제되었습니다.", {
-        type: "success",
-      });
-    } catch (err) {
-      console.error("리뷰 삭제 중 오류:", err);
-      toast("리뷰 삭제 중 오류가 발생했습니다.", {
-        type: "error",
-      });
-    } finally {
-      setDeleteConfirm({
-        isOpen: false,
-        reviewId: "",
-        travelId: "",
-      });
-      deleteConfirmModal.close();
+      setSelectedTravel(null);
+      closeDeleteConfirm();
     }
   };
 
-  const handleReviewDeleteCancel = () => {
-    setDeleteConfirm({
-      isOpen: false,
-      reviewId: "",
-      travelId: "",
-    });
-    deleteConfirmModal.close();
+  const handleReviewEditClick = (review: Review) => {
+    setSelectedReview(review);
+    openModal("reviewEditModal");
+  };
+
+  const handleReviewSave = async (
+    reviewId: string,
+    content: string,
+    rating: number
+  ) => {
+    const result = await updateReview(reviewId, content, rating);
+
+    if (result.success) {
+      setTravels((prevTravels) =>
+        prevTravels.map((travel) => ({
+          ...travel,
+          reviews:
+            travel.reviews?.map((review) =>
+              review.id === reviewId
+                ? {
+                    ...review,
+                    content,
+                    rating,
+                  }
+                : review
+            ) || [],
+        }))
+      );
+    }
   };
 
   const handleSignOut = async () => {
@@ -185,7 +130,7 @@ export default function DashboardClient({
       {/* 여행 추가 버튼 */}
       <div className="mb-6">
         <button
-          onClick={travelModal.open}
+          onClick={() => openModal("travelModal")}
           className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
         >
           여행 추가하기 ✈️
@@ -203,7 +148,13 @@ export default function DashboardClient({
         {date && (
           <p className="mt-4 text-gray-600">
             선택한 날짜:{" "}
-            <span className="font-medium">{date.toLocaleDateString()}</span>
+            <span className="font-medium">
+              {date.toLocaleDateString("ko-KR", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              })}
+            </span>
           </p>
         )}
       </div>
@@ -226,13 +177,28 @@ export default function DashboardClient({
                   <h3 className="text-lg font-semibold text-black">
                     {travel.title}
                   </h3>
-                  <span className="text-sm text-gray-500">
-                    {new Date(travel.start_date).toLocaleDateString("ko-KR")}
-                    {travel.end_date !== travel.start_date &&
-                      ` - ${new Date(travel.end_date).toLocaleDateString(
-                        "ko-KR"
-                      )}`}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500">
+                      {new Date(
+                        travel.start_date + "T00:00:00"
+                      ).toLocaleDateString("ko-KR")}
+                      {travel.end_date !== travel.start_date &&
+                        ` - ${new Date(
+                          travel.end_date + "T00:00:00"
+                        ).toLocaleDateString("ko-KR")}`}
+                    </span>
+                    {/* 여행 삭제 버튼 - 작성자 또는 관리자만 표시 */}
+                    {(profile?.role === "admin" ||
+                      travel.user_id === userId) && (
+                      <button
+                        onClick={() => handleTravelDeleteClick(travel)}
+                        className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                        title="여행 삭제"
+                      >
+                        🗑️
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* 목적지 목록 */}
@@ -281,24 +247,19 @@ export default function DashboardClient({
                                 <span key={i}>⭐</span>
                               ))}
                             </span>
-                            <span className="text-xs text-gray-500">
-                              {new Date(review.created_at).toLocaleDateString(
-                                "ko-KR"
-                              )}
-                            </span>
                           </div>
-                          {/* 삭제 버튼 - 작성자 또는 관리자만 표시 */}
+                          {/* 수정 버튼 - 작성자 또는 관리자만 표시 */}
                           {(profile?.role === "admin" ||
                             review.user_id === userId) && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleReviewDeleteClick(review.id, travel.id);
+                                handleReviewEditClick(review);
                               }}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded hover:bg-red-50"
-                              title="리뷰 삭제"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-500 hover:text-blue-700 text-xs px-2 py-1 rounded hover:bg-blue-50"
+                              title="리뷰 수정"
                             >
-                              삭제
+                              수정
                             </button>
                           )}
                         </div>
@@ -330,8 +291,8 @@ export default function DashboardClient({
       </div>
       {/* 여행 추가 모달 */}
       <TravelModal
-        isOpen={travelModal.isOpen}
-        onClose={travelModal.close}
+        isOpen={modals.travelModal}
+        onClose={() => closeModal("travelModal")}
         selectedDate={date || new Date()}
         userId={userId}
         onTravelAdded={handleTravelAdded}
@@ -339,51 +300,40 @@ export default function DashboardClient({
 
       {/* 리뷰 세부내용 모달 */}
       <ReviewDetailModal
-        isOpen={reviewDetailModal.isOpen}
-        onClose={reviewDetailModal.close}
+        isOpen={modals.reviewDetailModal}
+        onClose={() => closeModal("reviewDetailModal")}
         review={selectedReview}
-        canDelete={
+        canEdit={
           selectedReview
             ? profile?.role === "admin" || selectedReview.user_id === userId
             : false
         }
-        onDelete={() => {
+        onEdit={() => {
           if (selectedReview) {
-            handleReviewDeleteClick(selectedReview.id, selectedReview.id);
-            reviewDetailModal.close();
+            handleReviewEditClick(selectedReview);
+            closeModal("reviewDetailModal");
           }
         }}
       />
 
-      {/* 리뷰 삭제 확인 모달 */}
-      <Modal
+      {/* 리뷰 수정 모달 */}
+      <ReviewEditModal
+        isOpen={modals.reviewEditModal}
+        onClose={() => closeModal("reviewEditModal")}
+        review={selectedReview}
+        onSave={handleReviewSave}
+        isLoading={isReviewUpdating}
+      />
+
+      {/* 여행 삭제 확인 모달 */}
+      <DeleteConfirmModal
         isOpen={deleteConfirm.isOpen}
-        onClose={handleReviewDeleteCancel}
-        title="리뷰 삭제 확인"
-        size="md"
-      >
-        <p className="text-gray-600 mb-6">
-          정말로 이 리뷰를 삭제하시겠습니까?
-          <br />
-          <span className="text-sm text-gray-500">
-            삭제된 리뷰는 복구할 수 없습니다.
-          </span>
-        </p>
-        <div className="flex gap-3 justify-end">
-          <button
-            onClick={handleReviewDeleteCancel}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors"
-          >
-            취소
-          </button>
-          <button
-            onClick={handleReviewDeleteConfirm}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-          >
-            삭제
-          </button>
-        </div>
-      </Modal>
+        onClose={closeDeleteConfirm}
+        onConfirm={handleTravelDeleteConfirm}
+        title="여행 삭제 확인"
+        message="정말로 이 여행을 삭제하시겠습니까?"
+        isLoading={isLoading}
+      />
     </div>
   );
 }

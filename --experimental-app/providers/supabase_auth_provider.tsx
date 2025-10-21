@@ -82,7 +82,6 @@ export function SupabaseAuthProvider({
       const { error: profileError } = await supabaseClient
         .from("profiles")
         .insert({
-          // user_id는 트리거에서 자동 설정
           nickname,
           role,
         });
