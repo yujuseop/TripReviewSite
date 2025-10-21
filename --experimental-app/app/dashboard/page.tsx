@@ -17,7 +17,15 @@ export default async function DashboardPage() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll() {},
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach((cookie) => {
+              cookieStore.set(cookie.name, cookie.value, cookie.options);
+            });
+          } catch (error) {
+            console.error("Cookie setting error:", error);
+          }
+        },
       },
     }
   );
