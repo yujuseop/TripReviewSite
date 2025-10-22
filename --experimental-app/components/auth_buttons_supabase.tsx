@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/providers/supabase_auth_provider";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function AuthButtonsSupabase() {
   const { user, loading, signOut } = useAuth();
@@ -32,18 +33,18 @@ export function AuthButtonsSupabase() {
 
   return (
     <div className="flex gap-4">
-      <a
+      <Link
         href="/login"
         className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
       >
         로그인
-      </a>
-      <a
+      </Link>
+      <Link
         href="/signup"
         className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition"
       >
         회원가입
-      </a>
+      </Link>
     </div>
   );
 }

@@ -29,9 +29,9 @@ export default function SignupForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid }, //이즈밸리드
   } = useForm<SignupFormValues>({
-    resolver: zodResolver(signupSchema),
+    resolver: zodResolver(signupSchema), //모드온체인지
   });
 
   const onSubmit = async (data: SignupFormValues) => {
@@ -46,39 +46,39 @@ export default function SignupForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <FormField
+          {...register("email")}
           label="이메일"
           type="text"
           placeholder="이메일을 입력해주세요"
           error={errors.email?.message}
           required
-          {...register("email")}
         />
 
         <FormField
+          {...register("nickname")}
           label="닉네임"
           type="text"
           placeholder="닉네임을 입력해주세요"
           error={errors.nickname?.message}
           required
-          {...register("nickname")}
         />
 
         <FormField
+          {...register("password")}
           label="비밀번호"
           type="password"
           placeholder="비밀번호를 입력해주세요"
           error={errors.password?.message}
           required
-          {...register("password")}
         />
 
         <FormField
+          {...register("confirmPassword")}
           label="비밀번호 확인"
           type="password"
           placeholder="비밀번호를 다시 입력해주세요"
           error={errors.confirmPassword?.message}
           required
-          {...register("confirmPassword")}
         />
 
         <FormField
@@ -91,7 +91,7 @@ export default function SignupForm() {
 
         <FormButton
           type="submit"
-          isLoading={isLoading}
+          isLoading={isLoading || !isValid}
           disabled={isLoading}
           className="w-full"
         >
