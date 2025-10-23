@@ -1,7 +1,7 @@
 "use client";
 
 import Modal from "./ui/Modal";
-
+import LoadingSpinner from "./ui/LoadingSpinner";
 interface DeleteConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -38,14 +38,22 @@ export default function DeleteConfirmModal({
           disabled={isLoading}
           className="px-4 py-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
         >
-          {cancelText}
+          {isLoading ? (
+            <LoadingSpinner variant="dots" size="sm" color="white" />
+          ) : (
+            cancelText
+          )}
         </button>
         <button
           onClick={onConfirm}
           disabled={isLoading}
           className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
         >
-          {isLoading ? "삭제 중..." : confirmText}
+          {isLoading ? (
+            <LoadingSpinner variant="dots" size="sm" color="white" />
+          ) : (
+            confirmText
+          )}
         </button>
       </div>
     </Modal>

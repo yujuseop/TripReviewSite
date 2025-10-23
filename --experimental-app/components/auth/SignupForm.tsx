@@ -7,6 +7,7 @@ import { useSignup } from "@/hooks/useAuth";
 import { FormField } from "@/components/forms/FormField";
 import { FormButton } from "@/components/forms/FormButton";
 import Link from "next/link";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 const signupSchema = z
   .object({
@@ -95,7 +96,11 @@ export default function SignupForm() {
           disabled={isLoading}
           className="w-full"
         >
-          회원가입
+          {isLoading ? (
+            <LoadingSpinner variant="dots" size="sm" color="white" />
+          ) : (
+            "회원가입"
+          )}
         </FormButton>
       </form>
 

@@ -5,6 +5,7 @@ import { toast } from "js-toastify";
 import Modal from "@/components/ui/Modal";
 import { Travel, TravelModalProps } from "@/types/travel";
 import { useTravelForm } from "@/hooks/useTravelForm";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function TravelModal({
   isOpen,
@@ -297,14 +298,22 @@ export default function TravelModal({
           className="px-4 py-2 border rounded hover:bg-gray-100"
           disabled={state.loading}
         >
-          취소
+          {state.loading ? (
+            <LoadingSpinner variant="dots" size="sm" color="white" />
+          ) : (
+            "취소"
+          )}
         </button>
         <button
           onClick={handleSave}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
           disabled={state.loading}
         >
-          {state.loading ? "저장 중..." : "저장"}
+          {state.loading ? (
+            <LoadingSpinner variant="dots" size="sm" color="white" />
+          ) : (
+            "저장"
+          )}
         </button>
       </div>
     </Modal>

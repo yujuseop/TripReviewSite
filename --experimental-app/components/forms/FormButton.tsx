@@ -1,3 +1,5 @@
+import LoadingSpinner from "../ui/LoadingSpinner";
+
 interface FormButtonProps {
   type?: "button" | "submit" | "reset";
   variant?: "primary" | "secondary" | "danger";
@@ -45,10 +47,7 @@ export const FormButton = ({
       {...props}
     >
       {isLoading ? (
-        <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-          처리 중...
-        </div>
+        <LoadingSpinner variant="dots" size="sm" color="white" />
       ) : (
         children
       )}

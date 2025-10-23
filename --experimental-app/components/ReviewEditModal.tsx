@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Modal from "./ui/Modal";
 import { Review } from "@/types";
 import { toast } from "js-toastify";
+import LoadingSpinner from "./ui/LoadingSpinner";
 
 interface ReviewEditModalProps {
   isOpen: boolean;
@@ -105,7 +106,11 @@ export default function ReviewEditModal({
             disabled={isLoading || !content.trim()}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
           >
-            {isLoading ? "수정 중..." : "수정 완료"}
+            {isLoading ? (
+              <LoadingSpinner variant="spinner" size="sm" color="white" />
+            ) : (
+              "수정"
+            )}
           </button>
         </div>
       </div>

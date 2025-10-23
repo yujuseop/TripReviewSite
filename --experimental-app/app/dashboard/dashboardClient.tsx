@@ -14,6 +14,7 @@ import { useDelete } from "@/hooks/useDelete";
 import { useReviewEdit } from "@/hooks/useReviewEdit";
 import Link from "next/link";
 import { Travel, Review, Profile } from "@/types";
+import SpinnerDemo from "@/components/ui/SpinnerDemo";
 
 interface DashboardClientProps {
   profile: Profile;
@@ -115,13 +116,13 @@ export default function DashboardClient({
       <div className="mb-4 flex gap-3 ">
         <Link
           href="/profile"
-          className="px-3 py-1 text-sm border rounded hover:bg-gray-500"
+          className="px-3 py-1 text-sm border rounded-lg hover:bg-gray-500"
         >
           프로필
         </Link>
         <button
           onClick={handleSignOut}
-          className="px-3 py-1 text-sm border rounded hover:bg-gray-500"
+          className="px-3 py-1 text-sm border rounded-lg cursor-pointer hover:bg-gray-500"
         >
           로그아웃
         </button>
@@ -131,7 +132,7 @@ export default function DashboardClient({
       <div className="mb-6">
         <button
           onClick={() => openModal("travelModal")}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="px-4 py-2  text-white bg-purple-500 rounded-lg cursor-pointer hover:bg-purple-300"
         >
           여행 추가하기 ✈️
         </button>

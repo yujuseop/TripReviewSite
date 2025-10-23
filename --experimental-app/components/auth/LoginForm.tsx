@@ -7,6 +7,7 @@ import { useLogin } from "@/hooks/useAuth";
 import { FormField } from "@/components/forms/FormField";
 import { FormButton } from "@/components/forms/FormButton";
 import Link from "next/link";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 const loginSchema = z.object({
   email: z.string().email("유효한 이메일을 입력해주세요."),
@@ -59,7 +60,11 @@ export default function LoginForm() {
           disabled={isLoading}
           className="w-full"
         >
-          로그인
+          {isLoading ? (
+            <LoadingSpinner variant="dots" size="sm" color="white" />
+          ) : (
+            "로그인"
+          )}
         </FormButton>
       </form>
 
