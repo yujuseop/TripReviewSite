@@ -14,7 +14,6 @@ import { useDelete } from "@/hooks/useDelete";
 import { useReviewEdit } from "@/hooks/useReviewEdit";
 import Link from "next/link";
 import { Travel, Review, Profile } from "@/types";
-import SpinnerDemo from "@/components/ui/SpinnerDemo";
 
 interface DashboardClientProps {
   profile: Profile;
