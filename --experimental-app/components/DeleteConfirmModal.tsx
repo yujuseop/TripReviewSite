@@ -39,7 +39,7 @@ export default function DeleteConfirmModal({
           className="px-4 py-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
         >
           {isLoading ? (
-            <LoadingSpinner variant="dots" size="sm" color="white" />
+            <LoadingSpinner variant="spinner" size="sm" color="white" />
           ) : (
             cancelText
           )}
@@ -50,7 +50,7 @@ export default function DeleteConfirmModal({
           className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
         >
           {isLoading ? (
-            <LoadingSpinner variant="dots" size="sm" color="white" />
+            <LoadingSpinner variant="spinner" size="sm" color="white" />
           ) : (
             confirmText
           )}

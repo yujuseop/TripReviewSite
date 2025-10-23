@@ -160,7 +160,7 @@ export default function TravelModal({
       }}
       title={`${selectedDate.toLocaleDateString()} 여행지 추가`}
       size="2xl"
-      className="overflow-y-auto"
+      className="overflow-y-auto relative"
     >
       <input
         type="text"
@@ -298,24 +298,30 @@ export default function TravelModal({
           className="px-4 py-2 border rounded hover:bg-gray-100"
           disabled={state.loading}
         >
-          {state.loading ? (
-            <LoadingSpinner variant="dots" size="sm" color="white" />
-          ) : (
-            "취소"
-          )}
+          취소
         </button>
         <button
           onClick={handleSave}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
           disabled={state.loading}
         >
-          {state.loading ? (
-            <LoadingSpinner variant="dots" size="sm" color="white" />
-          ) : (
-            "저장"
-          )}
+          저장
         </button>
       </div>
+
+      {/* 전체 화면 로딩 오버레이 */}
+      {state.loading && (
+        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50 rounded-lg">
+          <div className="text-center">
+            <LoadingSpinner
+              variant="spinner"
+              size="xl"
+              color="gray"
+              text="여행 정보를 저장하는 중"
+            />
+          </div>
+        </div>
+      )}
     </Modal>
   );
 }

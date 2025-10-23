@@ -30,9 +30,9 @@ export default function SignupForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid }, //이즈밸리드
+    formState: { errors },
   } = useForm<SignupFormValues>({
-    resolver: zodResolver(signupSchema), //모드온체인지
+    resolver: zodResolver(signupSchema),
   });
 
   const onSubmit = async (data: SignupFormValues) => {
@@ -92,7 +92,7 @@ export default function SignupForm() {
 
         <FormButton
           type="submit"
-          isLoading={isLoading || !isValid}
+          isLoading={isLoading}
           disabled={isLoading}
           className="w-full"
         >
