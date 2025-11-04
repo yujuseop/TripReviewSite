@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Travel, Profile } from "@/types";
 import { useDashboard } from "@/hooks/useDashboard";
 import TravelList from "@/components/dashboard/TravelList";
+import ImageList from "@/components/dashboard/ImageList";
 
 interface DashboardClientProps {
   profile: Profile;
@@ -73,26 +74,35 @@ export default function DashboardClient({
         </button>
       </div>
 
-      {/* 캘린더 UI */}
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">여행 캘린더</h2>
-        <Calendar
-          value={date}
-          onChange={(value) => setDate(value as Date | null)}
-          locale="ko-KR"
-        />
-        {date && (
-          <p className="mt-4 text-gray-600">
-            선택한 날짜:{" "}
-            <span className="font-medium">
-              {date.toLocaleDateString("ko-KR", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-              })}
-            </span>
-          </p>
-        )}
+      {/* 캘린더와 이미지 목록 */}
+      <div className="mb-6 flex gap-6">
+        {/* 캘린더 UI */}
+        <div className="flex-1">
+          <h2 className="text-xl font-semibold mb-2">여행 캘린더</h2>
+          <Calendar
+            value={date}
+            onChange={(value) => setDate(value as Date | null)}
+            locale="ko-KR"
+          />
+          {date && (
+            <p className="mt-4 text-gray-600">
+              선택한 날짜:{" "}
+              <span className="font-medium">
+                {date.toLocaleDateString("ko-KR", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                })}
+              </span>
+            </p>
+          )}
+        </div>
+
+        {/* 이미지 목록 */}
+        <div className="flex-1">
+          <h2 className="text-xl font-semibold mb-2">이미지 목록</h2>
+          <ImageList travels={travels} />
+        </div>
       </div>
 
       {/* 내 여행 목록 */}
