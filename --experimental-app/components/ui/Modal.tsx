@@ -37,16 +37,16 @@ export default function Modal({
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4"
       onClick={handleBackdropClick}
     >
       <div
-        className={`bg-white p-6 rounded-xl w-full mx-4 my-8 ${sizeClasses[size]} ${className}`}
+        className={`bg-white rounded-xl w-full ${sizeClasses[size]} ${className} flex flex-col max-h-[90vh]`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
         {(title || showCloseButton) && (
-          <div className="flex justify-between items-start mb-4">
+          <div className="flex justify-between items-start p-6 pb-4 border-b flex-shrink-0">
             {title && <h2 className="text-xl font-bold text-black">{title}</h2>}
             {showCloseButton && (
               <button
@@ -60,8 +60,8 @@ export default function Modal({
           </div>
         )}
 
-        {/* 내용 */}
-        <div className="text-black">{children}</div>
+        {/* 내용 - 스크롤 가능 */}
+        <div className="text-black overflow-y-auto flex-1 p-6">{children}</div>
       </div>
     </div>
   );
