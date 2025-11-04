@@ -47,7 +47,30 @@ export function travelFormReducer(
         ...state,
         destinations: state.destinations.filter((_, i) => i !== action.payload),
       };
+    case "SET_IMAGES":
+      const files = Array.from(action.payload);
+      const previewUrls = files.map((file) => URL.createObjectURL(file));
+      return {
+        ...state,
+        selectedImages: [...state.selectedImages, ...files],
+        imagePreviewUrls: [...state.imagePreviewUrls, ...previewUrls],
+      };
+    case "REMOVE_IMAGE":
+      const removedPreviewUrl = state.imagePreviewUrls[action.payload];
+      if (removedPreviewUrl) {
+        URL.revokeObjectURL(removedPreviewUrl);
+      }
+      return {
+        ...state,
+        selectedImages: state.selectedImages.filter(
+          (_, i) => i !== action.payload
+        ),
+        imagePreviewUrls: state.imagePreviewUrls.filter(
+          (_, i) => i !== action.payload
+        ),
+      };
     case "RESET_FORM":
+      state.imagePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
       return initialTravelFormState;
     default:
       return state;

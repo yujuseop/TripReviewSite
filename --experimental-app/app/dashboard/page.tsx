@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import DashboardClient from "./dashboardClient";
 import Link from "next/link";
+import { Review } from "@/types";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -32,11 +33,7 @@ export default async function DashboardPage() {
 
   const {
     data: { user },
-    error: userError,
   } = await supabase.auth.getUser();
-
-  console.log("Dashboard - User:", user);
-  console.log("Dashboard - User Error:", userError);
 
   if (!user) {
     return (
@@ -49,15 +46,11 @@ export default async function DashboardPage() {
     );
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from("profiles")
     .select("*")
     .eq("user_id", user.id)
     .single();
-
-  console.log("Dashboard - User ID:", user.id);
-  console.log("Dashboard - Profile:", profile);
-  console.log("Dashboard - Profile Error:", profileError);
 
   const displayProfile = profile || {
     nickname:
@@ -75,17 +68,36 @@ export default async function DashboardPage() {
         content,
         rating,
         created_at,
-        user_id
+        user_id,
+        images
       )
     `
     )
     .eq("user_id", user.id)
     .order("start_date", { ascending: false });
 
+  const travelsWithImages = (travels || []).map((travel) => ({
+    ...travel,
+    reviews:
+      (travel.reviews as Review[])?.map((review) => {
+        let imageUrls: string[] = [];
+        if (Array.isArray(review.images)) {
+          imageUrls = review.images.filter(
+            (url) => typeof url === "string" && url.length > 0
+          );
+        }
+
+        return {
+          ...review,
+          images: imageUrls,
+        };
+      }) || [],
+  }));
+
   return (
     <DashboardClient
       profile={displayProfile}
-      initialTravels={travels || []}
+      initialTravels={travelsWithImages}
       userId={user.id}
     />
   );

@@ -26,6 +26,7 @@ export interface Review {
   rating: number;
   created_at: string;
   user_id: string;
+  images?: string[];
 }
 
 export interface TravelModalProps {
@@ -50,6 +51,8 @@ export interface TravelFormState {
   destName: string;
   destDesc: string;
   destDay: number;
+  selectedImages: File[];
+  imagePreviewUrls: string[];
 }
 
 export type TravelFormAction =
@@ -63,6 +66,8 @@ export type TravelFormAction =
   | { type: "SET_DEST_DAY"; payload: number }
   | { type: "ADD_DESTINATION" }
   | { type: "REMOVE_DESTINATION"; payload: number }
+  | { type: "SET_IMAGES"; payload: File[] }
+  | { type: "REMOVE_IMAGE"; payload: number }
   | { type: "RESET_FORM" };
 
 export const initialTravelFormState: TravelFormState = {
@@ -75,4 +80,6 @@ export const initialTravelFormState: TravelFormState = {
   destName: "",
   destDesc: "",
   destDay: 1,
+  selectedImages: [],
+  imagePreviewUrls: [],
 };

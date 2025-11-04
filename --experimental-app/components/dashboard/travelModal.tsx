@@ -6,12 +6,18 @@ import Modal from "@/components/ui/Modal";
 import { Travel, TravelModalProps } from "@/types/travel";
 import { useTravelForm } from "@/hooks/useTravelForm";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import LocationInput from "./travelForm/LocationInput";
+import DestinationSection from "./travelForm/DestinationSection";
+import ReviewSection from "./travelForm/ReviewSection";
+import ImageSection from "./travelForm/ImageSection";
+import RatingSection from "./travelForm/RatingSection";
+import PublicToggle from "./travelForm/PublicToggle";
 
 export default function TravelModal({
   isOpen,
   onClose,
   selectedDate,
-  userId,
+
   onTravelAdded,
 }: TravelModalProps) {
   const { state, dispatch, addDestination, removeDestination, resetForm } =
@@ -32,7 +38,6 @@ export default function TravelModal({
       } = await supabaseClient.auth.getUser();
 
       if (userErr) {
-        console.error("세션 조회 에러:", userErr);
         toast("세션을 확인할 수 없습니다. 다시 로그인해주세요.", {
           type: "error",
         });
@@ -44,14 +49,6 @@ export default function TravelModal({
         toast("로그인이 필요합니다.", { type: "error" });
         dispatch({ type: "SET_LOADING", payload: false });
         return;
-      }
-
-      if (sessionUser.id !== userId) {
-        console.warn(
-          "Warning: session user id and passed userId mismatch",
-          sessionUser.id,
-          userId
-        );
       }
 
       const effectiveUserId = sessionUser.id;
@@ -78,7 +75,6 @@ export default function TravelModal({
         .single();
 
       if (tripError) {
-        console.error("여행 저장 실패:", tripError);
         toast("여행 저장에 실패했습니다: " + tripError.message, {
           type: "error",
         });
@@ -108,9 +104,49 @@ export default function TravelModal({
             .select();
 
         if (destError) {
-          console.error("목적지 저장 실패:", destError);
         } else {
           createdTrip.destinations = insertedDestinations;
+        }
+      }
+
+      let imageUrls: string[] = [];
+      if (state.selectedImages.length > 0 && tripDataArr) {
+        try {
+          const uploadPromises = state.selectedImages.map(
+            async (file, index) => {
+              const fileExt = file.name.split(".").pop();
+              const fileName = `${Date.now()}-${index}.${fileExt}`;
+              const filePath = `${effectiveUserId}/${tripDataArr.id}/${fileName}`;
+
+              const { data: uploadData, error: uploadError } =
+                await supabaseClient.storage
+                  .from("trip-images")
+                  .upload(filePath, file, {
+                    cacheControl: "3600",
+                    upsert: false,
+                  });
+
+              if (uploadError) {
+                throw uploadError;
+              }
+
+              const actualFilePath = uploadData?.path || filePath;
+
+              const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+              const publicUrl = `${supabaseUrl}/storage/v1/object/public/trip-images/${actualFilePath}`;
+
+              return publicUrl;
+            }
+          );
+
+          imageUrls = await Promise.all(uploadPromises);
+        } catch {
+          toast(
+            "이미지 업로드에 실패했습니다. 리뷰는 저장되지만 이미지는 포함되지 않습니다.",
+            {
+              type: "warning",
+            }
+          );
         }
       }
 
@@ -123,16 +159,15 @@ export default function TravelModal({
               user_id: effectiveUserId,
               content: state.reviewContent.trim(),
               rating: state.rating,
+              images: imageUrls.length > 0 ? imageUrls : null,
             })
-            .select("id, content, rating, created_at, user_id");
+            .select("id, content, rating, created_at, user_id, images");
 
         if (reviewError) {
-          console.error("리뷰 저장 실패:", reviewError);
           toast("리뷰 저장에 실패했습니다: " + reviewError.message, {
             type: "error",
           });
         } else {
-          console.log("리뷰 저장 성공:", insertedReviews);
           createdTrip.reviews = Array.isArray(insertedReviews)
             ? insertedReviews
             : [insertedReviews];
@@ -143,8 +178,7 @@ export default function TravelModal({
 
       resetForm();
       onClose();
-    } catch (err: unknown) {
-      console.error("에러:", err);
+    } catch {
       toast("여행 저장 중 오류가 발생했습니다.", { type: "error" });
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });
@@ -162,132 +196,22 @@ export default function TravelModal({
       size="2xl"
       className="overflow-y-auto relative"
     >
-      <input
-        type="text"
-        placeholder="여행지 입력"
-        value={state.location}
-        onChange={(e) =>
-          dispatch({ type: "SET_LOCATION", payload: e.target.value })
-        }
-        className="border p-2 w-full my-2 rounded"
+      <LocationInput location={state.location} dispatch={dispatch} />
+
+      <DestinationSection
+        state={state}
+        dispatch={dispatch}
+        addDestination={addDestination}
+        removeDestination={removeDestination}
       />
 
-      {/* 목적지 추가 섹션 */}
-      <div className="my-4 border-t pt-4">
-        <h3 className="text-sm font-semibold mb-2">📍 여행 목적지 추가</h3>
-        <div className="space-y-2 mb-2">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="목적지 이름"
-              value={state.destName}
-              onChange={(e) =>
-                dispatch({ type: "SET_DEST_NAME", payload: e.target.value })
-              }
-              className="border p-2 flex-1 rounded text-sm"
-            />
-            <select
-              value={state.destDay}
-              onChange={(e) =>
-                dispatch({
-                  type: "SET_DEST_DAY",
-                  payload: Number(e.target.value),
-                })
-              }
-              className="border p-2 rounded text-sm"
-            >
-              {[1, 2, 3, 4, 5, 6, 7].map((d) => (
-                <option key={d} value={d}>
-                  {d}일차
-                </option>
-              ))}
-            </select>
-          </div>
-          <input
-            type="text"
-            placeholder="설명 (선택사항)"
-            value={state.destDesc}
-            onChange={(e) =>
-              dispatch({ type: "SET_DEST_DESC", payload: e.target.value })
-            }
-            className="border p-2 w-full rounded text-sm"
-          />
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={addDestination}
-              className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
-            >
-              + 목적지 추가
-            </button>
-          </div>
-        </div>
+      <ReviewSection reviewContent={state.reviewContent} dispatch={dispatch} />
 
-        {/* 추가된 목적지 목록 */}
-        {state.destinations.length > 0 && (
-          <div className="space-y-1">
-            {state.destinations.map((dest, index) => (
-              <div
-                key={index}
-                className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded"
-              >
-                <div>
-                  <span className="font-medium">
-                    {dest.day}일차 - {dest.name}
-                  </span>
-                  {dest.description && (
-                    <p className="text-xs text-black">{dest.description}</p>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeDestination(index)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <ImageSection state={state} dispatch={dispatch} />
 
-      <textarea
-        placeholder="리뷰 작성"
-        value={state.reviewContent}
-        onChange={(e) =>
-          dispatch({ type: "SET_REVIEW_CONTENT", payload: e.target.value })
-        }
-        className="border p-2 w-full my-2 rounded"
-        rows={3}
-      />
+      <RatingSection rating={state.rating} dispatch={dispatch} />
 
-      <div className="my-2">
-        <label className="block text-sm font-medium mb-1">평점</label>
-        <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              onClick={() => dispatch({ type: "SET_RATING", payload: star })}
-              className="text-2xl"
-            >
-              {star <= state.rating ? "⭐" : "☆"}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <label className="flex items-center gap-2 my-2">
-        <input
-          type="checkbox"
-          checked={state.isPublic}
-          onChange={(e) =>
-            dispatch({ type: "SET_IS_PUBLIC", payload: e.target.checked })
-          }
-        />
-        공개 여행으로 설정
-      </label>
+      <PublicToggle isPublic={state.isPublic} dispatch={dispatch} />
 
       <div className="flex justify-end gap-2">
         <button

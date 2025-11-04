@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Travel, Profile, Review } from "@/types";
+import Image from "next/image";
 
 interface TravelListProps {
   travels: Travel[];
@@ -121,6 +122,37 @@ export default function TravelList({
                   <p className="text-gray-700 text-sm line-clamp-2">
                     {review.content}
                   </p>
+                  {/* 리뷰 이미지 표시 */}
+                  {review.images && review.images.length > 0 && (
+                    <div className="mt-2 flex gap-2 flex-wrap">
+                      {review.images.map((imageUrl, imgIndex) => {
+                        if (typeof imageUrl !== "string" || !imageUrl) {
+                          return null;
+                        }
+
+                        return (
+                          <div key={imgIndex} className="relative w-20 h-20">
+                            <Image
+                              src={imageUrl}
+                              alt={`리뷰 이미지 ${imgIndex + 1}`}
+                              width={80}
+                              height={80}
+                              className="w-full h-full object-cover rounded border cursor-pointer hover:opacity-80 transition-opacity"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.open(imageUrl, "_blank");
+                              }}
+                              onError={(e) => {
+                                const imgElement = e.currentTarget;
+                                imgElement.style.display = "none";
+                              }}
+                              loading="lazy"
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                   <div className="text-xs text-gray-400 mt-1">
                     클릭하여 자세히 보기
                   </div>
