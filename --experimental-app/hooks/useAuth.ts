@@ -28,19 +28,7 @@ export const useLogin = () => {
       });
 
       if (error) {
-        if (
-          error.message.includes("email not confirmed") ||
-          error.message.includes("Invalid login credentials")
-        ) {
-          toast(
-            "이메일 인증이 필요합니다. 이메일을 확인하고 인증 링크를 클릭한 후 다시 로그인해주세요.",
-            {
-              type: "error",
-            }
-          );
-        } else {
-          toast(`로그인 실패: ${error.message}`, { type: "error" });
-        }
+        toast(`로그인 실패: ${error.message}`, { type: "error" });
         return { success: false, error: error.message };
       }
 
@@ -87,18 +75,9 @@ export const useSignup = () => {
         return { success: false, error: error.message };
       }
 
-      if (signupData.user && !signupData.user.email_confirmed_at) {
-        toast(
-          "회원가입이 완료되었습니다! 이메일을 확인하고 인증 링크를 클릭한 후 로그인해주세요.",
-          {
-            type: "success",
-          }
-        );
-      } else {
-        toast("회원가입이 완료되었습니다! 로그인해주세요.", {
-          type: "success",
-        });
-      }
+      toast("회원가입이 완료되었습니다! 로그인해주세요.", {
+        type: "success",
+      });
 
       router.push("/login");
       return { success: true };
