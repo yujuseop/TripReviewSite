@@ -48,7 +48,7 @@ export default function DestinationSection({
         </div>
         <input
           type="text"
-          placeholder="설명 (선택사항)"
+          placeholder="세부사항 (선택사항)"
           value={state.destDesc}
           onChange={(e) =>
             dispatch({ type: "SET_DEST_DESC", payload: e.target.value })
