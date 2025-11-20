@@ -28,7 +28,7 @@ export const useLogin = () => {
       });
 
       if (error) {
-        toast(`로그인 실패: ${error.message}`, { type: "error" });
+        toast("이메일과 비밀번호를 확인해주세요", { type: "error" });
         return { success: false, error: error.message };
       }
 

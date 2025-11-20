@@ -10,7 +10,7 @@
   --toast-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   --toast-min-width: 200px;
   --toast-gap: 8px;
-  --toast-z-index: 10000;
+  --toast-z-index: 9999;
 
   --toast-success-color: #10b981;
   --toast-error-color: #ef4444;
@@ -75,6 +75,18 @@ body {
 
 .toast-toast.warning {
   border-left: 6px solid #f59e0b;
+}
+
+/* Toast 컨테이너를 중앙 상단에 위치 */
+.toast-container {
+  position: fixed !important;
+  top: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  right: auto !important;
+  width: auto !important;
+  max-width: 90vw !important;
+  z-index: var(--toast-z-index) !important;
 }
 
 @keyframes spin-smooth {

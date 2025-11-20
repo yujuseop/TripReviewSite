@@ -38,7 +38,7 @@ export default function TravelModal({
       } = await supabaseClient.auth.getUser();
 
       if (userErr) {
-        toast("세션을 확인할 수 없습니다. 다시 로그인해주세요.", {
+        toast("정보를 확인할 수 없습니다. 다시 로그인해주세요.", {
           type: "error",
         });
         dispatch({ type: "SET_LOADING", payload: false });
