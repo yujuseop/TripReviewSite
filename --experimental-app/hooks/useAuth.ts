@@ -71,7 +71,15 @@ export const useSignup = () => {
       });
 
       if (error) {
-        toast(`회원가입 실패: ${error.message}`, { type: "error" });
+        const isEmailExists = error.message.includes("User already registered");
+
+        if (isEmailExists) {
+          toast("이메일이 존재합니다. 다른 이메일을 입력해주세요", {
+            type: "error",
+          });
+        } else {
+          toast(`회원가입 실패: ${error.message}`, { type: "error" });
+        }
         return { success: false, error: error.message };
       }
 
