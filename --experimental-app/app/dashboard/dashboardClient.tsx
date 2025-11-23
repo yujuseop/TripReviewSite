@@ -75,7 +75,7 @@ export default function DashboardClient({
       </div>
 
       {/* 캘린더와 이미지 목록 */}
-      <div className="mb-6 flex gap-6 sm:flex-row ">
+      <div className="mb-6 flex flex-col md:flex-row gap-6 ">
         {/* 캘린더 UI */}
         <div className="flex-1">
           <h2 className="text-xl font-semibold mb-2">여행 캘린더</h2>
