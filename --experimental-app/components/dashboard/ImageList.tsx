@@ -76,7 +76,7 @@ export default function ImageList({ travels }: ImageListProps) {
   return (
     <div className="relative">
       {/* 이미지 슬라이더 */}
-      <div className="relative h-[400px] overflow-hidden rounded-lg border">
+      <div className="relative h-[200px] overflow-hidden rounded-lg border md:h-[400px]">
         <div
           className="flex transition-transform duration-500 ease-in-out h-full"
           style={{

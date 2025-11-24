@@ -219,14 +219,14 @@ export default function TravelModal({
             resetForm();
             onClose();
           }}
-          className="px-4 py-2 border rounded hover:bg-gray-100"
+          className="px-3 py-1 md:px-4 md:py-2 text-xs md:text-sm border rounded hover:bg-gray-100"
           disabled={state.loading}
         >
           취소
         </button>
         <button
           onClick={handleSave}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
+          className="px-3 py-1 md:px-4 md:py-2 text-xs md:text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
           disabled={state.loading}
         >
           저장

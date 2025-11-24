@@ -37,9 +37,11 @@ export default function TravelList({
           className="border rounded-lg p-4 bg-white shadow-sm"
         >
           <div className="flex justify-between items-start mb-2">
-            <h3 className="text-lg font-semibold text-black">{travel.title}</h3>
+            <h3 className="text-base font-semibold text-black md:text-lg">
+              {travel.title}
+            </h3>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">
+              <span className="text-xs md:text-sm text-gray-500">
                 {new Date(travel.start_date + "T00:00:00").toLocaleDateString(
                   "ko-KR"
                 )}
@@ -51,7 +53,7 @@ export default function TravelList({
               {(profile?.role === "admin" || travel.user_id === userId) && (
                 <button
                   onClick={() => onTravelDeleteClick(travel)}
-                  className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                  className="text-red-500 hover:text-red-700 text-xs md:text-sm px-2 py-1 rounded hover:bg-red-50 transition-colors"
                   title="여행 삭제"
                 >
                   🗑️
@@ -62,7 +64,7 @@ export default function TravelList({
 
           {travel.destinations && travel.destinations.length > 0 && (
             <div className="mb-3">
-              <h4 className="text-sm font-semibold text-gray-700 mb-2">
+              <h4 className="text-xs md:text-sm font-semibold text-gray-700 mb-2">
                 📍 여행 목적지
               </h4>
               <div className="space-y-1">
@@ -79,7 +81,7 @@ export default function TravelList({
                         {dest.name}
                       </span>
                       {dest.description && (
-                        <p className="text-gray-600 text-xs ml-2">
+                        <p className="text-gray-600 text-xs md:text-sm ml-2">
                           {dest.description}
                         </p>
                       )}
@@ -99,7 +101,7 @@ export default function TravelList({
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1">
-                      <span className="text-yellow-500">
+                      <span className="text-yellow-500 text-xs md:text-base">
                         {Array.from({ length: review.rating }, (_, i) => (
                           <span key={i}>⭐</span>
                         ))}
@@ -119,7 +121,7 @@ export default function TravelList({
                       </button>
                     )}
                   </div>
-                  <p className="text-gray-700 text-sm line-clamp-2">
+                  <p className="text-gray-700 text-xs md:text-sm line-clamp-2">
                     {review.content}
                   </p>
                   {/* 리뷰 이미지 표시 */}
@@ -162,12 +164,12 @@ export default function TravelList({
           )}
 
           {!travel.is_public && (
-            <span className="inline-block px-2 py-1 text-xs bg-gray-200 rounded">
+            <span className="inline-block px-2 py-1 text-xs md:text-sm bg-gray-200 rounded">
               🔒 비공개
             </span>
           )}
           {travel.is_public && (
-            <span className="inline-block px-2 py-1 text-xs bg-green-100 text-green-700 rounded">
+            <span className="inline-block px-2 py-1 text-xs md:text-sm bg-green-100 text-green-700 rounded">
               🌍 공개
             </span>
           )}

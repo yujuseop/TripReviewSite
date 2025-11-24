@@ -19,7 +19,7 @@ export default function LocationInput({
       onChange={(e) =>
         dispatch({ type: "SET_LOCATION", payload: e.target.value })
       }
-      className="border p-2 w-full my-2 rounded"
+      className="border p-2 w-full my-1 md:my-2 rounded text-xs md:text-sm"
     />
   );
 }

@@ -11,7 +11,9 @@ interface ImageSectionProps {
 export default function ImageSection({ state, dispatch }: ImageSectionProps) {
   return (
     <div className="my-4 border-t pt-4">
-      <h3 className="text-sm font-semibold mb-2">이미지 추가 (선택사항)</h3>
+      <h3 className="text-sm md:text-lg font-semibold mb-2">
+        이미지 추가 (선택사항)
+      </h3>
       <input
         type="file"
         accept="image/*"
@@ -46,7 +48,7 @@ export default function ImageSection({ state, dispatch }: ImageSectionProps) {
                 onClick={() =>
                   dispatch({ type: "REMOVE_IMAGE", payload: index })
                 }
-                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs md:text-sm opacity-0 group-hover:opacity-100 transition-opacity"
                 title="이미지 제거"
               >
                 ×

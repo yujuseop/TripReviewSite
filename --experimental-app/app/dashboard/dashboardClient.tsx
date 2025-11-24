@@ -46,29 +46,29 @@ export default function DashboardClient({
 
   return (
     <div className="p-6 ">
-      <h1 className="text-2xl font-bold mb-4 ">
+      <h1 className="text-xl md:text-2xl font-bold mb-4 ">
         안녕하세요, {profile?.nickname}님 👋
       </h1>
       <div className="mb-4 flex gap-3 ">
         <Link
           href="/profile"
-          className="px-3 py-1 text-sm border rounded-lg hover:bg-gray-500"
+          className="px-3 py-2 md:py-1 text-xs md:text-sm border rounded-lg hover:bg-gray-500"
         >
           프로필
         </Link>
         <button
           onClick={handleSignOut}
-          className="px-3 py-1 text-sm border rounded-lg cursor-pointer hover:bg-gray-500"
+          className="px-3 py-2 md:py-1 text-xs border md:text-sm rounded-lg cursor-pointer hover:bg-gray-500"
         >
           로그아웃
         </button>
       </div>
 
       {/* 여행 추가 버튼 */}
-      <div className="mb-6">
+      <div className="my-5 mx-1">
         <button
           onClick={() => openModal("travelModal")}
-          className="px-4 py-2  text-white bg-purple-500 rounded-lg cursor-pointer hover:bg-purple-300"
+          className="px-5 py-2 md:px-6  text-xs md:text-sm text-white bg-purple-500 rounded-lg cursor-pointer hover:bg-purple-300"
         >
           여행 추가하기 ✈️
         </button>
@@ -78,14 +78,14 @@ export default function DashboardClient({
       <div className="mb-6 flex flex-col md:flex-row gap-6 ">
         {/* 캘린더 UI */}
         <div className="flex-1">
-          <h2 className="text-xl font-semibold mb-2">여행 캘린더</h2>
+          <h2 className="text-lg md:text-xl font-semibold mb-2">여행 캘린더</h2>
           <Calendar
             value={date}
             onChange={(value) => setDate(value as Date | null)}
             locale="ko-KR"
           />
           {date && (
-            <p className="mt-4 text-gray-600">
+            <p className="mt-4 text-xs md:text-sm text-gray-600">
               선택한 날짜:{" "}
               <span className="font-medium">
                 {date.toLocaleDateString("ko-KR", {

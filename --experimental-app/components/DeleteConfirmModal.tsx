@@ -25,10 +25,10 @@ export default function DeleteConfirmModal({
 }: DeleteConfirmModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} size="md">
-      <p className="text-gray-600 mb-6">
+      <p className="text-gray-600 mb-6 text-sm md:text-base">
         {message}
         <br />
-        <span className="text-sm text-gray-500">
+        <span className="text-xs md:text-sm text-gray-500">
           삭제된 항목은 복구할 수 없습니다.
         </span>
       </p>
@@ -36,7 +36,7 @@ export default function DeleteConfirmModal({
         <button
           onClick={onClose}
           disabled={isLoading}
-          className="px-4 py-2 border border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
+          className="px-3 py-1 md:px-4 md:py-2 border text-xs md:text-sm border-gray-300 rounded-lg text-black hover:bg-gray-50 transition-colors disabled:opacity-50"
         >
           {isLoading ? (
             <LoadingSpinner variant="spinner" size="sm" color="white" />
@@ -47,7 +47,7 @@ export default function DeleteConfirmModal({
         <button
           onClick={onConfirm}
           disabled={isLoading}
-          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
+          className="px-3 py-1 md:px-4 md:py-2 text-xs md:text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
         >
           {isLoading ? (
             <LoadingSpinner variant="spinner" size="sm" color="white" />

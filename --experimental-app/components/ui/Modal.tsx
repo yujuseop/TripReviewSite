@@ -47,7 +47,11 @@ export default function Modal({
         {/* 헤더 */}
         {(title || showCloseButton) && (
           <div className="flex justify-between items-start p-6 pb-4 border-b flex-shrink-0">
-            {title && <h2 className="text-xl font-bold text-black">{title}</h2>}
+            {title && (
+              <h2 className="text-lg md:text-xl font-bold text-black">
+                {title}
+              </h2>
+            )}
             {showCloseButton && (
               <button
                 onClick={onClose}
