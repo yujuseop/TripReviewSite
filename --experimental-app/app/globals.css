@@ -55,6 +55,16 @@ body {
   color: #000 !important;
 }
 
+/* 주말과 공휴일 빨간색 스타일 */
+.react-calendar__tile.text-red-500 {
+  color: #ef4444 !important;
+  font-weight: 600 !important;
+}
+
+.react-calendar__tile.text-red-500:hover {
+  background-color: #fee2e2 !important;
+}
+
 .toast-toast {
   background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
   color: white;

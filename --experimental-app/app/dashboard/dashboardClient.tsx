@@ -64,16 +64,6 @@ export default function DashboardClient({
         </button>
       </div>
 
-      {/* 여행 추가 버튼 */}
-      <div className="my-5 mx-1">
-        <button
-          onClick={() => openModal("travelModal")}
-          className="px-5 py-2 md:px-6  text-xs md:text-sm text-white bg-purple-500 rounded-lg cursor-pointer hover:bg-purple-300"
-        >
-          여행 추가하기 ✈️
-        </button>
-      </div>
-
       {/* 캘린더와 이미지 목록 */}
       <div className="mb-6 flex flex-col md:flex-row gap-6 ">
         {/* 캘린더 UI */}
@@ -96,6 +86,16 @@ export default function DashboardClient({
               </span>
             </p>
           )}
+
+          {/* 여행 추가 버튼 */}
+          <div className=" my-1 md:my-5 ">
+            <button
+              onClick={() => openModal("travelModal")}
+              className="px-5 py-2 md:px-4  text-xs md:text-sm text-white bg-purple-500 rounded-lg cursor-pointer hover:bg-purple-300"
+            >
+              여행 추가하기 ✈️
+            </button>
+          </div>
         </div>
 
         {/* 이미지 목록 */}
