@@ -52,10 +52,14 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .single();
 
-  const displayProfile = profile || {
+  const displayProfile = {
+    ...profile,
     nickname:
-      user.user_metadata?.nickname || user.email?.split("@")[0] || "사용자",
-    email: user.email,
+      profile?.nickname ||
+      user.user_metadata?.nickname ||
+      user.email?.split("@")[0] ||
+      "사용자",
+    email: user.email || "",
   };
 
   const { data: travels } = await supabase
