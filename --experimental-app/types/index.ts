@@ -5,7 +5,7 @@ export interface Profile {
   nickname: string;
   email?: string;
   role?: string;
-  profile_image?: string;
+  profile_Image?: string;
   bio?: string;
   created_at?: string;
   updated_at?: string;

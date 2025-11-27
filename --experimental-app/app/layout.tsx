@@ -2,6 +2,7 @@ import "./globals.css";
 import { ReactQueryProvider } from "@/providers/query_provider";
 import { SupabaseAuthProvider } from "@/providers/supabase_auth_provider";
 import { Metadata } from "next";
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "TripView",
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
+        <Header />
         <SupabaseAuthProvider>
           <ReactQueryProvider>{children}</ReactQueryProvider>
         </SupabaseAuthProvider>
