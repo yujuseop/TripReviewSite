@@ -6,7 +6,6 @@ import TravelModal from "../../components/dashboard/travelModal";
 import ReviewDetailModal from "@/components/ReviewDetailModal";
 import ReviewEditModal from "@/components/ReviewEditModal";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal";
-import Link from "next/link";
 import { Travel, Profile } from "@/types";
 import { useDashboard } from "@/hooks/useDashboard";
 import TravelList from "@/components/dashboard/TravelList";
@@ -32,7 +31,6 @@ export default function DashboardClient({
     deleteConfirm,
     isDeleting,
     isReviewUpdating,
-    handleSignOut,
     handleTravelAdded,
     handleReviewClick,
     handleTravelDeleteClick,
@@ -49,20 +47,6 @@ export default function DashboardClient({
       <h1 className="text-xl md:text-2xl font-bold mb-4 ">
         안녕하세요, {profile?.nickname}님 👋
       </h1>
-      <div className="mb-4 flex gap-3 ">
-        <Link
-          href="/profile"
-          className="px-3 py-2 md:py-1 text-xs md:text-sm border rounded-lg hover:bg-gray-500"
-        >
-          프로필
-        </Link>
-        <button
-          onClick={handleSignOut}
-          className="px-3 py-2 md:py-1 text-xs border md:text-sm rounded-lg cursor-pointer hover:bg-gray-500"
-        >
-          로그아웃
-        </button>
-      </div>
 
       {/* 캘린더와 이미지 목록 */}
       <div className="mb-6 flex flex-col md:flex-row gap-6 ">
