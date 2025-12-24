@@ -40,7 +40,7 @@ export default async function DashboardPage() {
       <div className="flex flex-col items-center justify-center min-h-screen">
         <p className="text-lg mb-4">로그인 후 접근 가능합니다.</p>
         <Link href="/login" className="text-blue-600 hover:underline">
-          로그인 페이지로 이동
+          로그인 하러가기
         </Link>
       </div>
     );
