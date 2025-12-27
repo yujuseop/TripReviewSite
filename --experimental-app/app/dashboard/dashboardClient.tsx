@@ -45,7 +45,7 @@ export default function DashboardClient({
   return (
     <div className="p-6 ">
       <h1 className="text-xl md:text-2xl font-bold mb-4 ">
-        안녕하세요, {profile?.nickname}님 👋
+        트래블 리뷰에 오신걸 환영합니다. {profile?.nickname}님 👋
       </h1>
 
       {/* 캘린더와 이미지 목록 */}
