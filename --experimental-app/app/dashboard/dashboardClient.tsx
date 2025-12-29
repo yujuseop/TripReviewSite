@@ -143,7 +143,7 @@ export default function DashboardClient({
         onClose={closeDeleteConfirm}
         onConfirm={handleTravelDeleteConfirm}
         title="여행 삭제 확인"
-        message="정말로 이 여행을 삭제하시겠습니까?"
+        message="정말로 여행을 삭제하시겠습니까?"
         isLoading={isDeleting}
       />
     </div>
