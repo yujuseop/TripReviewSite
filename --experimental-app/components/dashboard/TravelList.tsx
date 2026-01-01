@@ -56,7 +56,7 @@ export default function TravelList({
                   className="text-red-500 hover:text-red-700 text-xs md:text-sm px-2 py-1 rounded hover:bg-red-50 transition-colors"
                   title="여행 삭제"
                 >
-                  🗑️
+                  🗑️ 제거
                 </button>
               )}
             </div>
