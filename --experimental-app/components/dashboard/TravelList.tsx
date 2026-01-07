@@ -163,12 +163,12 @@ export default function TravelList({
 
           {!travel.is_public && (
             <span className="inline-block px-2 py-1 text-xs md:text-sm bg-gray-200 rounded">
-              🔒 비공개
+              비공개
             </span>
           )}
           {travel.is_public && (
             <span className="inline-block px-2 py-1 text-xs md:text-sm bg-green-100 text-green-700 rounded">
-              🌍 공개
+              공개
             </span>
           )}
         </div>
