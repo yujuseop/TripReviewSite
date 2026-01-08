@@ -89,7 +89,7 @@ export default function ReviewEditModal({
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="여행에 대한 리뷰를 작성해주세요..."
+            placeholder="여행에 대한 리뷰를 작성해주세요."
             className="w-full p-3 border text-xs md:text-sm border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
             rows={4}
             disabled={isLoading}
