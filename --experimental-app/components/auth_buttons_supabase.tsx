@@ -16,7 +16,7 @@ export function AuthButtonsSupabase() {
     return (
       <div className="flex gap-4">
         <button className="px-6 py-3 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-900 transition">
-          <a href="/dashboard">대시보드로 이동</a>
+          <a href="/dashboard"> 트래블 페이지로 이동</a>
         </button>
         <button
           onClick={async () => {
