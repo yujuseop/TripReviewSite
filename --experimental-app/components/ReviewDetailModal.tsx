@@ -27,12 +27,9 @@ export default function ReviewDetailModal({
             평점
           </label>
           <div className="flex items-center gap-1 mt-1">
-            <span className="text-yellow-500 text-xs md:text-lg">
-              {Array.from({ length: review.rating }, (_, i) => (
-                <span key={i}>⭐</span>
-              ))}
+            <span className="text-red-300 text-xs md:text-base">
+              {review.rating}점
             </span>
-            <span className="text-gray-600 text-sm">({review.rating}/5)</span>
           </div>
         </div>
 

@@ -67,15 +67,19 @@ export default function ReviewEditModal({
             평점
           </label>
           <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map((star) => (
+            {[1, 2, 3, 4, 5].map((score) => (
               <button
-                key={star}
+                key={score}
                 type="button"
-                onClick={() => setRating(star)}
-                className="text-lg md:text-3xl focus:outline-none"
+                onClick={() => setRating(score)}
+                className={`px-3 py-1 rounded border text-sm md:text-base transition-colors ${
+                  score === rating
+                    ? "bg-gray-500 text-white border-gray-500"
+                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
+                }`}
                 disabled={isLoading}
               >
-                {star <= rating ? "⭐" : "☆"}
+                {score}점
               </button>
             ))}
           </div>

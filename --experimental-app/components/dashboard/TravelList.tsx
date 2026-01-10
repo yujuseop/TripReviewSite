@@ -101,10 +101,8 @@ export default function TravelList({
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1">
-                      <span className="text-yellow-500 text-xs md:text-base">
-                        {Array.from({ length: review.rating }, (_, i) => (
-                          <span key={i}>⭐</span>
-                        ))}
+                      <span className="text-red-300 text-xs md:text-base">
+                        {review.rating}점
                       </span>
                     </div>
                     {(profile?.role === "admin" ||
