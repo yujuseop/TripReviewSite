@@ -159,7 +159,7 @@ export default function TravelList({
             </div>
           )}
 
-          {!travel.is_public && (
+          {/* {!travel.is_public && (
             <span className="inline-block px-2 py-1 text-xs md:text-sm bg-gray-200 rounded">
               비공개
             </span>
@@ -168,7 +168,7 @@ export default function TravelList({
             <span className="inline-block px-2 py-1 text-xs md:text-sm bg-green-100 text-green-700 rounded">
               공개
             </span>
-          )}
+          )} */}
         </div>
       ))}
     </div>
