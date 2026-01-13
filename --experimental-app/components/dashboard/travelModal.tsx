@@ -11,7 +11,7 @@ import DestinationSection from "./travelForm/DestinationSection";
 import ReviewSection from "./travelForm/ReviewSection";
 import ImageSection from "./travelForm/ImageSection";
 import RatingSection from "./travelForm/RatingSection";
-import PublicToggle from "./travelForm/PublicToggle";
+// import PublicToggle from "./travelForm/PublicToggle";
 
 export default function TravelModal({
   isOpen,
@@ -211,7 +211,7 @@ export default function TravelModal({
 
       <RatingSection rating={state.rating} dispatch={dispatch} />
 
-      <PublicToggle isPublic={state.isPublic} dispatch={dispatch} />
+      {/* <PublicToggle isPublic={state.isPublic} dispatch={dispatch} /> */}
 
       <div className="flex justify-end gap-2">
         <button
