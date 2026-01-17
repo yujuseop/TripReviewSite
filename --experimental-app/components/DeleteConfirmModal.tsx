@@ -29,7 +29,7 @@ export default function DeleteConfirmModal({
         {message}
         <br />
         <span className="text-xs md:text-sm text-gray-500">
-          삭제된 항목은 복구할 수 없습니다.
+          삭제된 항목은 복구가 불가능합니다.
         </span>
       </p>
       <div className="flex gap-3 justify-end">
