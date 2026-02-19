@@ -43,11 +43,11 @@ export default function TravelList({
             <div className="flex items-center gap-2">
               <span className="text-xs md:text-sm text-gray-500">
                 {new Date(travel.start_date + "T00:00:00").toLocaleDateString(
-                  "ko-KR"
+                  "ko-KR",
                 )}
                 {travel.end_date !== travel.start_date &&
                   ` - ${new Date(
-                    travel.end_date + "T00:00:00"
+                    travel.end_date + "T00:00:00",
                   ).toLocaleDateString("ko-KR")}`}
               </span>
               {(profile?.role === "admin" || travel.user_id === userId) && (
@@ -72,7 +72,7 @@ export default function TravelList({
                   .sort(
                     (a, b) =>
                       (a.day || 0) - (b.day || 0) ||
-                      (a.order_num || 0) - (b.order_num || 0)
+                      (a.order_num || 0) - (b.order_num || 0),
                   )
                   .map((dest) => (
                     <div key={dest.id} className="text-sm pl-2">
@@ -158,17 +158,6 @@ export default function TravelList({
               ))}
             </div>
           )}
-
-          {/* {!travel.is_public && (
-            <span className="inline-block px-2 py-1 text-xs md:text-sm bg-gray-200 rounded">
-              비공개
-            </span>
-          )}
-          {travel.is_public && (
-            <span className="inline-block px-2 py-1 text-xs md:text-sm bg-green-100 text-green-700 rounded">
-              공개
-            </span>
-          )} */}
         </div>
       ))}
     </div>
