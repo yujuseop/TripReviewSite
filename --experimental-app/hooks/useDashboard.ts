@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseClient } from "@/lib/supabaseClient";
 import { useModalState } from "@/hooks/useModalState";
 import { useDelete } from "@/hooks/useDelete";
 import { useReviewEdit } from "@/hooks/useReviewEdit";
 import { Travel, Review, Profile } from "@/types";
+
+type FilterType = "전체" | "맛집" | "관광지" | "평점순";
 
 interface UseDashboardParams {
   profile: Profile;
@@ -23,6 +25,7 @@ export function useDashboard({
   const [travels, setTravels] = useState<Travel[]>(initialTravels);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [selectedTravel, setSelectedTravel] = useState<Travel | null>(null);
+  const [activeFilter, setActiveFilter] = useState<FilterType>("전체");
 
   const router = useRouter();
   const {
@@ -35,6 +38,24 @@ export function useDashboard({
   } = useModalState();
   const { deleteTravel, isLoading } = useDelete();
   const { updateReview, isLoading: isReviewUpdating } = useReviewEdit();
+
+  const filteredTravels = useMemo(() => {
+    if (activeFilter === "맛집" || activeFilter === "관광지") {
+      return travels.filter((t) =>
+        t.destinations?.some((d) => d.category === activeFilter)
+      );
+    }
+    if (activeFilter === "평점순") {
+      return [...travels].sort((a, b) => {
+        const avgRating = (t: Travel) =>
+          t.reviews?.length
+            ? t.reviews.reduce((s, r) => s + r.rating, 0) / t.reviews.length
+            : 0;
+        return avgRating(b) - avgRating(a);
+      });
+    }
+    return travels;
+  }, [travels, activeFilter]);
 
   const handleTravelAdded = (newTravel: Travel) => {
     setTravels([newTravel, ...travels]);
@@ -79,13 +100,7 @@ export function useDashboard({
           ...travel,
           reviews:
             travel.reviews?.map((r) =>
-              r.id === reviewId
-                ? {
-                    ...r,
-                    content,
-                    rating,
-                  }
-                : r
+              r.id === reviewId ? { ...r, content, rating } : r
             ) || [],
         }))
       );
@@ -103,9 +118,12 @@ export function useDashboard({
     date,
     setDate,
     travels,
+    filteredTravels,
     setTravels,
     selectedReview,
     selectedTravel,
+    activeFilter,
+    setActiveFilter,
 
     modals,
     deleteConfirm,

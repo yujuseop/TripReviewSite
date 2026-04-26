@@ -95,6 +95,10 @@ export default function TravelModal({
           description: dest.description || null,
           day: dest.day,
           order_num: index + 1,
+          category: dest.category || null,
+          cost: dest.cost > 0 ? dest.cost : null,
+          lat: dest.lat ?? null,
+          lng: dest.lng ?? null,
         }));
 
         const { data: insertedDestinations, error: destError } =
@@ -150,18 +154,20 @@ export default function TravelModal({
         }
       }
 
-      if (tripDataArr && state.reviewContent.trim()) {
+      if (tripDataArr && (state.reviewContent.trim() || state.oneLineSummary.trim())) {
         const { data: insertedReviews, error: reviewError } =
           await supabaseClient
             .from("reviews")
             .insert({
               trip_id: tripDataArr.id,
               user_id: effectiveUserId,
-              content: state.reviewContent.trim(),
+              content: state.reviewContent.trim() || "",
               rating: state.rating,
               images: imageUrls.length > 0 ? imageUrls : null,
+              mood_tags: state.moodTags.length > 0 ? state.moodTags : null,
+              one_line_summary: state.oneLineSummary.trim() || null,
             })
-            .select("id, content, rating, created_at, user_id, images");
+            .select("id, content, rating, created_at, user_id, images, mood_tags, one_line_summary");
 
         if (reviewError) {
           toast("리뷰 저장에 실패했습니다: " + reviewError.message, {
@@ -205,7 +211,12 @@ export default function TravelModal({
         removeDestination={removeDestination}
       />
 
-      <ReviewSection reviewContent={state.reviewContent} dispatch={dispatch} />
+      <ReviewSection
+        reviewContent={state.reviewContent}
+        oneLineSummary={state.oneLineSummary}
+        moodTags={state.moodTags}
+        dispatch={dispatch}
+      />
 
       <ImageSection state={state} dispatch={dispatch} />
 

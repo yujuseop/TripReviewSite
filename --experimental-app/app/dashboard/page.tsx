@@ -67,13 +67,27 @@ export default async function DashboardPage() {
     .select(
       `
       *,
+      destinations (
+        id,
+        name,
+        description,
+        day,
+        order_num,
+        category,
+        lat,
+        lng,
+        cost,
+        created_at
+      ),
       reviews (
         id,
         content,
         rating,
         created_at,
         user_id,
-        images
+        images,
+        mood_tags,
+        one_line_summary
       )
     `
     )

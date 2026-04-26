@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import TravelModal from "../../components/dashboard/travelModal";
@@ -10,6 +11,14 @@ import { Travel, Profile } from "@/types";
 import { useDashboard } from "@/hooks/useDashboard";
 import TravelList from "@/components/dashboard/TravelList";
 import ImageList from "@/components/dashboard/ImageList";
+import TotalCostDisplay from "@/components/dashboard/TotalCostDisplay";
+
+const TravelMap = dynamic(
+  () => import("@/components/dashboard/TravelMap"),
+  { ssr: false }
+);
+
+const FILTERS = ["전체", "맛집", "관광지", "평점순"] as const;
 
 interface DashboardClientProps {
   profile: Profile;
@@ -26,11 +35,14 @@ export default function DashboardClient({
     date,
     setDate,
     travels,
+    filteredTravels,
     selectedReview,
     modals,
     deleteConfirm,
     isDeleting,
     isReviewUpdating,
+    activeFilter,
+    setActiveFilter,
     handleTravelAdded,
     handleReviewClick,
     handleTravelDeleteClick,
@@ -43,14 +55,16 @@ export default function DashboardClient({
   } = useDashboard({ profile, initialTravels, userId });
 
   return (
-    <div className="p-6 ">
-      <h1 className="text-xl md:text-2xl font-bold mb-4 ">
+    <div className="p-6">
+      <h1 className="text-xl md:text-2xl font-bold mb-4">
         트래블 리뷰에 오신걸 환영합니다. {profile?.nickname}님 👋
       </h1>
 
+      {/* 총 여행 경비 */}
+      <TotalCostDisplay travels={travels} />
+
       {/* 캘린더와 이미지 목록 */}
-      <div className="mb-6 flex flex-col md:flex-row gap-6 ">
-        {/* 캘린더 UI */}
+      <div className="mb-6 flex flex-col md:flex-row gap-6">
         <div className="flex-1">
           <h2 className="text-lg md:text-xl font-semibold mb-2">여행 캘린더</h2>
           <Calendar
@@ -70,37 +84,62 @@ export default function DashboardClient({
               </span>
             </p>
           )}
-
-          {/* 여행 추가 버튼 */}
-          <div className=" my-1 md:my-5 ">
+          <div className="my-1 md:my-5">
             <button
               onClick={() => openModal("travelModal")}
-              className="px-5 py-2 md:px-4  text-xs md:text-sm text-white bg-purple-500 rounded-lg cursor-pointer hover:bg-purple-300"
+              className="px-5 py-2 md:px-4 text-xs md:text-sm text-white bg-purple-500 rounded-lg cursor-pointer hover:bg-purple-300"
             >
               여행 추가하기 ✈️
             </button>
           </div>
         </div>
 
-        {/* 이미지 목록 */}
         <div className="flex-1">
           <h2 className="text-xl font-semibold mb-2">이미지 목록</h2>
           <ImageList travels={travels} />
         </div>
       </div>
 
-      {/* 내 여행 목록 */}
+      {/* 필터 탭 + 여행 목록 */}
       <div>
-        <h2 className="text-xl font-semibold mb-2">내 여행 목록</h2>
-        <TravelList
-          travels={travels}
-          profile={profile}
-          userId={userId}
-          onReviewClick={handleReviewClick}
-          onTravelDeleteClick={handleTravelDeleteClick}
-          onReviewEditClick={handleReviewEditClick}
-        />
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <h2 className="text-xl font-semibold">내 여행 목록</h2>
+          <div className="flex gap-1">
+            {FILTERS.map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  activeFilter === filter
+                    ? "bg-purple-500 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {filteredTravels.length === 0 ? (
+          <p className="text-sm text-gray-400 py-6 text-center">
+            해당 필터에 맞는 여행이 없습니다.
+          </p>
+        ) : (
+          <TravelList
+            travels={filteredTravels}
+            profile={profile}
+            userId={userId}
+            onReviewClick={handleReviewClick}
+            onTravelDeleteClick={handleTravelDeleteClick}
+            onReviewEditClick={handleReviewEditClick}
+          />
+        )}
       </div>
+
+      {/* 여행지 지도 (좌표가 있는 목적지만 표시) */}
+      <TravelMap travels={travels} />
+
       {/* 여행 추가 모달 */}
       <TravelModal
         isOpen={modals.travelModal}
