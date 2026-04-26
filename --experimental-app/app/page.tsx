@@ -1,13 +1,13 @@
-import { AuthButtonsSupabase } from "@/components/auth_buttons_supabase";
+import HeroSlider from "@/components/landing/HeroSlider";
+import FeatureSection from "@/components/landing/FeatureSection";
+import CtaSection from "@/components/landing/CtaSection";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <h1 className="text-4xl font-bold mb-4 text-gray-800">✈️ TripView</h1>
-      <p className="text-lg text-gray-600 mb-6">
-        나만의 여행을 기록하고, 추억을 공유하세요.
-      </p>
-      <AuthButtonsSupabase />
+    <main className="bg-white">
+      <HeroSlider />
+      <FeatureSection />
+      <CtaSection />
     </main>
   );
 }
