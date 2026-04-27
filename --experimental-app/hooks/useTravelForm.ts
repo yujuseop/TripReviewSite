@@ -14,6 +14,15 @@ export function travelFormReducer(
       return { ...state, location: action.payload };
     case "SET_REVIEW_CONTENT":
       return { ...state, reviewContent: action.payload };
+    case "SET_ONE_LINE_SUMMARY":
+      return { ...state, oneLineSummary: action.payload };
+    case "TOGGLE_MOOD_TAG":
+      return {
+        ...state,
+        moodTags: state.moodTags.includes(action.payload)
+          ? state.moodTags.filter((t) => t !== action.payload)
+          : [...state.moodTags, action.payload],
+      };
     case "SET_RATING":
       return { ...state, rating: action.payload };
     case "SET_IS_PUBLIC":
@@ -26,6 +35,16 @@ export function travelFormReducer(
       return { ...state, destDesc: action.payload };
     case "SET_DEST_DAY":
       return { ...state, destDay: action.payload };
+    case "SET_DEST_COST":
+      return { ...state, destCost: action.payload };
+    case "SET_DEST_CATEGORY":
+      return { ...state, destCategory: action.payload };
+    case "SET_DEST_LAT":
+      return { ...state, destLat: action.payload };
+    case "SET_DEST_LNG":
+      return { ...state, destLng: action.payload };
+    case "SET_DEST_PLACE_NAME":
+      return { ...state, destPlaceName: action.payload };
     case "ADD_DESTINATION":
       if (!state.destName.trim()) return state;
       return {
@@ -36,18 +55,27 @@ export function travelFormReducer(
             name: state.destName.trim(),
             description: state.destDesc.trim(),
             day: state.destDay,
+            cost: state.destCost,
+            category: state.destCategory,
+            lat: state.destLat,
+            lng: state.destLng,
           },
         ],
         destName: "",
         destDesc: "",
         destDay: 1,
+        destCost: 0,
+        destCategory: "관광지",
+        destLat: null,
+        destLng: null,
+        destPlaceName: "",
       };
     case "REMOVE_DESTINATION":
       return {
         ...state,
         destinations: state.destinations.filter((_, i) => i !== action.payload),
       };
-    case "SET_IMAGES":
+    case "SET_IMAGES": {
       const files = Array.from(action.payload);
       const previewUrls = files.map((file) => URL.createObjectURL(file));
       return {
@@ -55,7 +83,8 @@ export function travelFormReducer(
         selectedImages: [...state.selectedImages, ...files],
         imagePreviewUrls: [...state.imagePreviewUrls, ...previewUrls],
       };
-    case "REMOVE_IMAGE":
+    }
+    case "REMOVE_IMAGE": {
       const removedPreviewUrl = state.imagePreviewUrls[action.payload];
       if (removedPreviewUrl) {
         URL.revokeObjectURL(removedPreviewUrl);
@@ -69,6 +98,7 @@ export function travelFormReducer(
           (_, i) => i !== action.payload
         ),
       };
+    }
     case "RESET_FORM":
       state.imagePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
       return initialTravelFormState;
