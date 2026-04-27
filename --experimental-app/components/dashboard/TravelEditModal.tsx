@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabaseClient } from "@/lib/supabaseClient";
 import { toast } from "js-toastify";
 import Modal from "@/components/ui/Modal";
@@ -31,6 +31,15 @@ export default function TravelEditModal({
 
   const { state, dispatch, addDestination, removeDestination, resetForm } =
     useTravelForm();
+
+  useEffect(() => {
+    if (isOpen && travel) {
+      setTitle(travel.title);
+      setExistingDests(travel.destinations ?? []);
+      setRemovedDestIds([]);
+      resetForm();
+    }
+  }, [isOpen, travel?.id]);
 
   if (!travel) return null;
 

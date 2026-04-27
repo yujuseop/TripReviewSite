@@ -13,12 +13,10 @@ import { Travel, Profile } from "@/types";
 import { useDashboard } from "@/hooks/useDashboard";
 import TravelList from "@/components/dashboard/TravelList";
 import ImageList from "@/components/dashboard/ImageList";
-import TotalCostDisplay from "@/components/dashboard/TotalCostDisplay";
 
-const TravelMap = dynamic(
-  () => import("@/components/dashboard/TravelMap"),
-  { ssr: false }
-);
+const TravelMap = dynamic(() => import("@/components/dashboard/TravelMap"), {
+  ssr: false,
+});
 
 const FILTERS = ["전체", "맛집", "관광지", "평점순"] as const;
 
@@ -63,11 +61,8 @@ export default function DashboardClient({
   return (
     <div className="p-6">
       <h1 className="text-xl md:text-2xl font-bold mb-4">
-        트래블 리뷰에 오신걸 환영합니다. {profile?.nickname}님 👋
+        {profile?.nickname}님의 여행 기록 📝
       </h1>
-
-      {/* 총 여행 경비 */}
-      <TotalCostDisplay travels={travels} />
 
       {/* 캘린더와 이미지 목록 */}
       <div className="mb-6 flex flex-col md:flex-row gap-6">
@@ -145,7 +140,9 @@ export default function DashboardClient({
       </div>
 
       {/* 여행지 지도 (좌표가 있는 목적지만 표시) */}
-      <TravelMap travels={travels} />
+      <div className="relative z-0">
+        <TravelMap travels={travels} />
+      </div>
 
       {/* 여행 추가 모달 */}
       <TravelModal
