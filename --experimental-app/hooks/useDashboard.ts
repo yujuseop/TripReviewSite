@@ -66,6 +66,21 @@ export function useDashboard({
     openModal("reviewDetailModal");
   };
 
+  const handleTravelClick = (travel: Travel) => {
+    setSelectedTravel(travel);
+    openModal("travelDetailModal");
+  };
+
+  const handleTravelEditOpen = (travel: Travel) => {
+    setSelectedTravel(travel);
+    openModal("travelEditModal");
+  };
+
+  const handleTravelUpdated = (updated: Travel) => {
+    setTravels((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+    setSelectedTravel(updated);
+  };
+
   const handleTravelDeleteClick = (travel: Travel) => {
     setSelectedTravel(travel);
     openDeleteConfirm("travel", travel.id);
@@ -137,6 +152,9 @@ export function useDashboard({
 
     handleSignOut,
     handleTravelAdded,
+    handleTravelClick,
+    handleTravelEditOpen,
+    handleTravelUpdated,
     handleReviewClick,
     handleTravelDeleteClick,
     handleTravelDeleteConfirm,

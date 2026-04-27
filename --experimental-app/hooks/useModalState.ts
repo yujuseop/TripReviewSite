@@ -4,6 +4,8 @@ import { useState } from "react";
 
 interface ModalState {
   travelModal: boolean;
+  travelDetailModal: boolean;
+  travelEditModal: boolean;
   reviewDetailModal: boolean;
   travelDeleteModal: boolean;
   reviewDeleteModal: boolean;
@@ -20,6 +22,8 @@ interface DeleteConfirmState {
 export const useModalState = () => {
   const [modals, setModals] = useState<ModalState>({
     travelModal: false,
+    travelDetailModal: false,
+    travelEditModal: false,
     reviewDetailModal: false,
     travelDeleteModal: false,
     reviewDeleteModal: false,
@@ -66,6 +70,8 @@ export const useModalState = () => {
   const closeAllModals = () => {
     setModals({
       travelModal: false,
+      travelDetailModal: false,
+      travelEditModal: false,
       reviewDetailModal: false,
       travelDeleteModal: false,
       reviewDeleteModal: false,

@@ -8,6 +8,7 @@ interface TravelListProps {
   travels: Travel[];
   profile: Profile;
   userId: string;
+  onTravelClick: (travel: Travel) => void;
   onReviewClick: (review: Review) => void;
   onTravelDeleteClick: (travel: Travel) => void;
   onReviewEditClick: (review: Review) => void;
@@ -17,6 +18,7 @@ export default function TravelList({
   travels,
   profile,
   userId,
+  onTravelClick,
   onReviewClick,
   onTravelDeleteClick,
   onReviewEditClick,
@@ -37,7 +39,10 @@ export default function TravelList({
           className="border rounded-lg p-4 bg-white shadow-sm"
         >
           <div className="flex justify-between items-start mb-2">
-            <h3 className="text-base font-semibold text-black md:text-lg">
+            <h3
+              className="text-base font-semibold text-black md:text-lg cursor-pointer hover:text-purple-600 transition-colors"
+              onClick={() => onTravelClick(travel)}
+            >
               {travel.title}
             </h3>
             <div className="flex items-center gap-2">

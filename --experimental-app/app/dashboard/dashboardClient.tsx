@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import TravelModal from "../../components/dashboard/travelModal";
+import TravelDetailModal from "@/components/dashboard/detail/TravelDetailModal";
+import TravelEditModal from "@/components/dashboard/TravelEditModal";
 import ReviewDetailModal from "@/components/ReviewDetailModal";
 import ReviewEditModal from "@/components/ReviewEditModal";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal";
@@ -37,6 +39,7 @@ export default function DashboardClient({
     travels,
     filteredTravels,
     selectedReview,
+    selectedTravel,
     modals,
     deleteConfirm,
     isDeleting,
@@ -44,6 +47,9 @@ export default function DashboardClient({
     activeFilter,
     setActiveFilter,
     handleTravelAdded,
+    handleTravelClick,
+    handleTravelEditOpen,
+    handleTravelUpdated,
     handleReviewClick,
     handleTravelDeleteClick,
     handleTravelDeleteConfirm,
@@ -130,6 +136,7 @@ export default function DashboardClient({
             travels={filteredTravels}
             profile={profile}
             userId={userId}
+            onTravelClick={handleTravelClick}
             onReviewClick={handleReviewClick}
             onTravelDeleteClick={handleTravelDeleteClick}
             onReviewEditClick={handleReviewEditClick}
@@ -147,6 +154,25 @@ export default function DashboardClient({
         selectedDate={date || new Date()}
         userId={userId}
         onTravelAdded={handleTravelAdded}
+      />
+
+      {/* 여행 상세 모달 */}
+      <TravelDetailModal
+        isOpen={modals.travelDetailModal}
+        onClose={() => closeModal("travelDetailModal")}
+        travel={selectedTravel}
+        onEditClick={() => {
+          closeModal("travelDetailModal");
+          handleTravelEditOpen(selectedTravel!);
+        }}
+      />
+
+      {/* 여행 수정 모달 */}
+      <TravelEditModal
+        isOpen={modals.travelEditModal}
+        onClose={() => closeModal("travelEditModal")}
+        travel={selectedTravel}
+        onUpdated={handleTravelUpdated}
       />
 
       {/* 리뷰 세부내용 모달 */}
