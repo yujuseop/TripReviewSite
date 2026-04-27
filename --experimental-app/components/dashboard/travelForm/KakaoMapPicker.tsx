@@ -83,7 +83,27 @@ export default function KakaoMapPicker({
         "click",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (mouseEvent: any) => {
-          placeMarker(mouseEvent.latLng, "직접 선택한 위치");
+          const latlng = mouseEvent.latLng;
+          const lng = latlng.getLng();
+          const lat = latlng.getLat();
+          const geocoder = new window.kakao.maps.services.Geocoder();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          geocoder.coord2Address(lng, lat, (result: any, status: any) => {
+            const addr =
+              status === window.kakao.maps.services.Status.OK && result[0]
+                ? (result[0].road_address?.address_name ?? result[0].address.address_name)
+                : "";
+
+            const ps = new window.kakao.maps.services.Places();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ps.keywordSearch(addr || "장소", (places: any[], placeStatus: any) => {
+              if (placeStatus === window.kakao.maps.services.Status.OK && places.length > 0) {
+                placeMarker(latlng, places[0].place_name);
+              } else {
+                placeMarker(latlng, addr);
+              }
+            }, { x: lng, y: lat, radius: 30, size: 1, sort: window.kakao.maps.services.SortBy.DISTANCE });
+          });
         }
       );
 

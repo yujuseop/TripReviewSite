@@ -13,7 +13,15 @@ const KakaoMapPicker = dynamic(() => import("./KakaoMapPicker"), {
   ),
 });
 
-const CATEGORIES = ["관광지", "맛집", "카페", "숙소", "액티비티", "쇼핑", "기타"];
+const CATEGORIES = [
+  "관광지",
+  "맛집",
+  "카페",
+  "숙소",
+  "액티비티",
+  "쇼핑",
+  "기타",
+];
 
 interface DestinationSectionProps {
   state: TravelFormState;
@@ -35,10 +43,17 @@ export default function DestinationSection({
     setShowMap(false);
   };
 
-  const handleLocationSelect = (lat: number, lng: number, placeName: string) => {
+  const handleLocationSelect = (
+    lat: number,
+    lng: number,
+    placeName: string,
+  ) => {
     dispatch({ type: "SET_DEST_LAT", payload: lat });
     dispatch({ type: "SET_DEST_LNG", payload: lng });
     dispatch({ type: "SET_DEST_PLACE_NAME", payload: placeName });
+    if (placeName) {
+      dispatch({ type: "SET_DEST_NAME", payload: placeName });
+    }
   };
 
   const handleClearLocation = () => {
@@ -49,7 +64,9 @@ export default function DestinationSection({
 
   return (
     <div className="my-4 border-t pt-4">
-      <h3 className="text-sm md:text-base font-semibold mb-3">여행 목적지 추가</h3>
+      <h3 className="text-sm md:text-base font-semibold mb-3">
+        여행 목적지 추가
+      </h3>
 
       <div className="space-y-2 mb-3">
         {/* 이름 + 일차 */}
@@ -66,7 +83,10 @@ export default function DestinationSection({
           <select
             value={state.destDay}
             onChange={(e) =>
-              dispatch({ type: "SET_DEST_DAY", payload: Number(e.target.value) })
+              dispatch({
+                type: "SET_DEST_DAY",
+                payload: Number(e.target.value),
+              })
             }
             className="border p-2 rounded text-xs md:text-sm focus:outline-none"
           >
@@ -117,7 +137,7 @@ export default function DestinationSection({
         {/* 세부사항 */}
         <input
           type="text"
-          placeholder="세부사항 (선택사항)"
+          placeholder="세부사항 (ex: 대표메뉴, 주소, 전화번호, 영업시간 등)"
           value={state.destDesc}
           onChange={(e) =>
             dispatch({ type: "SET_DEST_DESC", payload: e.target.value })
@@ -142,7 +162,11 @@ export default function DestinationSection({
           {/* 선택된 위치 표시 */}
           {state.destLat && state.destLng && (
             <div className="flex items-center gap-1 text-xs text-green-700 bg-green-50 border border-green-200 rounded px-2 py-1">
-              <span>📍 {state.destPlaceName || `${state.destLat.toFixed(4)}, ${state.destLng.toFixed(4)}`}</span>
+              <span>
+                📍{" "}
+                {state.destPlaceName ||
+                  `${state.destLat.toFixed(4)}, ${state.destLng.toFixed(4)}`}
+              </span>
               <button
                 type="button"
                 onClick={handleClearLocation}
@@ -198,7 +222,9 @@ export default function DestinationSection({
                   )}
                 </div>
                 {dest.description && (
-                  <p className="text-gray-400 mt-0.5 truncate">{dest.description}</p>
+                  <p className="text-gray-400 mt-0.5 truncate">
+                    {dest.description}
+                  </p>
                 )}
               </div>
               <button
