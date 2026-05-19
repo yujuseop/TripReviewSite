@@ -4,15 +4,15 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 
 const slides = [
-  { src: "/image/강원도.jpeg", label: "강원도 정동진" },
-  { src: "/image/경기도 가평.jpeg", label: "경기도 가평" },
-  { src: "/image/대구.jpeg", label: "대구 팔공산" },
-  { src: "/image/롯데월드&타워.jpeg", label: "서울 롯데월드 & 타워" },
-  { src: "/image/영월.jpeg", label: "영월 청령포" },
-  { src: "/image/전라도 전주.jpeg", label: "전라도 전주" },
-  { src: "/image/진해.jpeg", label: "진해 군항제" },
-  { src: "/image/충청도.jpeg", label: "충청도 단양" },
-  { src: "/image/해운대.jpeg", label: "부산 해운대" },
+  { src: "/image/gangwondo.jpeg", label: "강원도 정동진" },
+  { src: "/image/gapyeong.jpeg", label: "경기도 가평" },
+  { src: "/image/daegu.jpeg", label: "대구 팔공산" },
+  { src: "/image/lotte-world-tower.jpeg", label: "서울 롯데월드 & 타워" },
+  { src: "/image/yeongwol.jpeg", label: "영월 청령포" },
+  { src: "/image/jeonju.jpeg", label: "전라도 전주" },
+  { src: "/image/jinhae.jpeg", label: "진해 군항제" },
+  { src: "/image/chungcheongdo.jpeg", label: "충청도 단양" },
+  { src: "/image/haeundae.jpeg", label: "부산 해운대" },
 ];
 
 export default function HeroSlider() {
