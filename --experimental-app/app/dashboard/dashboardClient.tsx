@@ -13,6 +13,7 @@ import { Travel, Profile } from "@/types";
 import { useDashboard } from "@/hooks/useDashboard";
 import TravelList from "@/components/dashboard/TravelList";
 import ImageList from "@/components/dashboard/ImageList";
+import ChatButton from "@/components/chat/ChatButton";
 
 const TravelMap = dynamic(() => import("@/components/dashboard/TravelMap"), {
   ssr: false,
@@ -198,6 +199,9 @@ export default function DashboardClient({
         onSave={handleReviewSave}
         isLoading={isReviewUpdating}
       />
+
+      {/* AI 챗봇 플로팅 버튼 */}
+      <ChatButton travels={travels} />
 
       {/* 여행 삭제 확인 모달 */}
       <DeleteConfirmModal
